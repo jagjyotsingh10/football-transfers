@@ -1,15 +1,28 @@
-# Football Transfer ROI: Does Transfer Spending Buy Results?
+# Football Squads as Asset Portfolios
 
-**Business question:** Across Europe's top 5 leagues (2020/21 to 2025/26), which clubs turn transfer spending into league points efficiently, and which overspend?
+**Business question:** Treating each club's squad as a portfolio of player assets, how have value, risk and growth changed across Europe's top 5 leagues from 2020 to 2026, and which clubs buy, hold and sell assets well?
 
 **Stack:** SQL Server (data model and analysis), Python (data load), Power BI (dashboard)
-**Data:** [Football Data from Transfermarkt](https://www.kaggle.com/datasets/davidcariboo/player-scores) on Kaggle
+**Data:** [Football Data from Transfermarkt](https://www.kaggle.com/datasets/davidcariboo/player-scores) on Kaggle, top 5 leagues only
 
-> This README covers Week 1 (setup). Findings, dashboard screenshots and recommendations get added in Weeks 2–4.
+**Answers to all 10 questions: [`docs/findings.md`](docs/findings.md)**
+
+| # | Question | Headline |
+|---|---|---|
+| 1 | How has each club's portfolio value changed over time? | Top 5 value up 38% to €32.6bn; Premier League +71% |
+| 2 | Which clubs have the highest concentration risk? | Levante: 71.8% of value in its top 5 players |
+| 3 | Which acquisitions appreciated most after joining? | Vitinha at PSG: €30m to €140m |
+| 4 | Which clubs are most exposed to declining values? | About a third of all value is in declining players; Athletic Bilbao 79% |
+| 5 | How do clubs compare on value, growth, composition? | PSG €1.40bn, Man City €1.35bn, Arsenal €1.28bn |
+| 6 | How does age profile relate to value and growth? | Weak link (r = -0.16); the top 5 is getting younger |
+| 7 | Which clubs have the biggest fees paid vs received gap? | Chelsea +€1.01bn net; Lille -€310m |
+| 8 | How do fees compare with market value at transfer? | Only 15.6% of deals within 10% of value |
+| 9 | How volatile are valuations? | About 30% per revaluation; Arsenal's portfolio is the steadiest |
+| 10 | Which clubs have the highest average asset value? | PSG €55.8m per player, 5.4× the Ligue 1 average |
 
 ---
 
-## Week 1 setup (Windows)
+## Setup (Windows)
 
 ### 1. Install the tools (free)
 - **SQL Server 2022 Express** (choose "Basic" install). Note the instance name it shows, usually `localhost\SQLEXPRESS`.
@@ -30,8 +43,10 @@ Download the dataset from Kaggle (Download button, top right) and unzip it into 
 |---|---|---|---|
 | 1 | `sql/01_create_database.sql` | SSMS | Creates the `FootballTransferROI` database with `stg` (raw) and `dw` (clean) schemas |
 | 2 | `python/02_load_staging.py` | Terminal | Loads the CSVs into `stg` as raw text, matched by column name; checks row counts |
-| 3 | `sql/03_build_warehouse.sql` | SSMS | Builds the typed star schema in `dw` with primary and foreign keys |
+| 3 | `sql/03_build_warehouse.sql` | SSMS | Builds the typed star schema in `dw`, limited to the top 5 leagues |
 | 4 | `sql/04_data_quality_checks.sql` | SSMS | Runs 9 checks on completeness, fee reliability and implausible values |
+| 5 | `sql/05_portfolio_model.sql` | SSMS | Builds the portfolio snapshots and the `rpt` reporting views Power BI uses |
+| 6 | `sql/06_portfolio_questions.sql` | SSMS | Answers the 10 questions |
 
 Step 2 command:
 ```
@@ -45,45 +60,53 @@ If your instance has a different name, add `--server "YOURPC\SQLEXPRESS"`. If yo
 
 Relationships (foreign keys):
 ```
-fact_match            → dim_competition, dim_season, dim_club (home), dim_club (away)
-fact_club_match       → fact_match, dim_club (club), dim_club (opponent)
-fact_appearance       → fact_match, dim_player, dim_club
-fact_player_valuation → dim_player
-fact_transfer         → dim_player, dim_season
-                        (buyer/seller clubs flagged, not keyed: the other side
-                         of a deal is often a club outside the top 5)
+fact_match              → dim_competition, dim_season, dim_club (home), dim_club (away)
+fact_club_match         → fact_match, dim_club (club), dim_club (opponent)
+fact_appearance         → fact_match, dim_player, dim_club
+fact_player_valuation   → dim_player
+fact_transfer           → dim_player, dim_season
+                          (buyer/seller clubs flagged, not keyed: the other side
+                           of a deal is often a club outside the top 5)
+fact_portfolio_snapshot → dim_snapshot, dim_player, dim_club
 ```
 
 | Table | Grain | Purpose |
 |---|---|---|
 | `dim_competition` | league | Premier League, LaLiga, Serie A, Bundesliga, Ligue 1 |
 | `dim_season` | season | 2020/21–2025/26, with 1 July–30 June windows |
+| `dim_snapshot` | 30 June | 2020 (opening) to 2026; each closes a season |
 | `dim_club` | club | Every club that played an in-scope league match |
-| `dim_player` | player | Profile and current/peak market value |
+| `dim_player` | player | Players linked to a top 5 club (10,515 of 50,149 in the source) |
 | `fact_match` | match | Scores, date, attendance |
-| `fact_club_match` | club × match | Result and points, the basis for league tables |
+| `fact_club_match` | club × match | Result and points |
 | `fact_transfer` | transfer | Fee, market value at transfer, fee category |
 | `fact_player_valuation` | player × date | Market value history (from a year before 2020/21) |
 | `fact_appearance` | player × match | Minutes, goals, assists, cards |
+| `fact_portfolio_snapshot` | player × 30 June | Each player's club, value, value a year earlier and age at each snapshot |
+
+Reporting views (`rpt` schema, for Power BI): `vw_club_portfolio`, `vw_portfolio_player`, `vw_portfolio_composition`, `vw_club_kpis`, `vw_club_volatility`, `vw_player_volatility`, `vw_signing_appreciation`, `vw_fee_vs_value`, `vw_club_transfer_balance`, plus `vw_dim_club`, `vw_dim_competition`, `vw_dim_snapshot`.
 
 ---
 
 ## Design decisions
 
 1. **Raw and clean data are separate.** Everything lands in `stg` as text, and typing happens in SQL with `TRY_CAST`, so bad values become NULLs that the quality checks can count instead of crashing the load.
-2. **Seasons run 1 July to 30 June**, so the summer and January windows both count toward the season they affect.
-3. **2026/27 is excluded**: it's in progress, and a partial season would distort points-per-euro comparisons.
+2. **Top 5 leagues only.** Clubs come from top 5 league matches, and players are limited to those linked to a top 5 club, keeping the warehouse to about a fifth of the source.
+3. **Seasons run 1 July to 30 June**, so the summer and January windows both count toward the season they affect. 2026/27 is excluded because it is in progress.
 4. **Clubs come from match data, not the clubs file.** The clubs file only records each club's *current* league, so relegated clubs would otherwise disappear.
-5. **Points are calculated from raw scores** (3 for a win, 1 for a draw) rather than taken from a pre-built table.
-6. **Fees are split into three categories.** The source records free transfers, loans and loan returns all as €0, and unknown fees as blank. `fee_category` keeps "paid", "zero" and "unknown" apart so spend totals can state their coverage honestly.
+5. **Portfolios are valued every 30 June**, the end of each season and most clubs' financial year-end.
+6. **A player's club is whichever came last: his latest transfer or his latest valuation.** Valuations come every few months, so on their own they lag behind transfers.
+7. **A portfolio is the club's 25 most valuable players.** The source stopped valuing most reserve and youth players in 2024; the top 25 hold 96–98% of value in every year, so squads stay comparable.
+8. **Fees are split into three categories.** The source records free transfers, loans and loan returns all as €0, and unknown fees as blank. `fee_category` keeps "paid", "zero" and "unknown" apart so spend totals can state their coverage honestly.
+9. **Volatility uses log changes**, so cheap players' huge percentage jumps don't swamp the measure.
 
 ## Data quality log
-See `docs/data_quality_log.md`. All 9 checks passed on the 2026-10-25 download: every league-season is complete and nothing was dropped during typing. The main caveat is fee coverage: only 20–28% of incoming deals per season have a known paid fee, so spend figures are paid fees only and state their coverage.
+See `docs/data_quality_log.md`. All 9 checks passed on the 2026-10-25 download: every league-season is complete and nothing was dropped during typing. The main caveats are fee coverage (only 20–28% of incoming deals per season have a known paid fee) and the 2024 drop in valuation coverage, handled by the 25-player portfolio.
 
 ---
 
 ## Roadmap
 - [x] **Week 1:** Database, load pipeline, star schema, data quality checks
-- [ ] **Week 2:** SQL analysis: league tables from raw results, net spend per club-season, cost per point, signing value change, minutes played by expensive signings; reporting views for Power BI
-- [ ] **Week 3:** Power BI: league overview, spend vs. performance, club drill-through
-- [ ] **Week 4:** Findings, recommendations, screenshots, walkthrough
+- [x] **Week 2:** Portfolio model, reporting views, answers to the 10 questions
+- [ ] **Week 3:** Power BI: portfolio overview, club benchmark, risk (concentration, decline, volatility), transfers (appreciation, fee vs value)
+- [ ] **Week 4:** Recommendations, screenshots, walkthrough

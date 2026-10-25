@@ -10,8 +10,9 @@
    Design notes (useful for your README and interviews):
      - Seasons run 1 July to 30 June, so both transfer windows (summer and
        January) fall inside the season they affect.
-     - 2026/27 is excluded on purpose: it is in progress, and partial
-       seasons would distort points-per-euro comparisons.
+     - 2026/27 is excluded on purpose: it is in progress, and a partial
+       season would distort season-on-season comparisons.
+     - Players are limited to those linked to a top 5 club (see dim_player).
      - Club results are derived from raw scores here, not taken from the
        dataset's club_games table, so the points logic is fully ours.
      - The source records free transfers, loans and loan returns all as a
@@ -120,7 +121,10 @@ LEFT JOIN clubs_dedup cl ON cl.club_id = ln.club_id AND cl.rn = 1
 WHERE ln.rn = 1;
 GO
 
-/* ---------- dim_player ---------- */
+/* ---------- dim_player: only players linked to a top 5 club ----------
+   Kept to players who, between July 2019 and June 2026, were valued while at
+   a dim_club club, moved to or from one, or played an in-scope league match.
+   Everyone else in the source (lower leagues worldwide) is out of scope. */
 CREATE TABLE dw.dim_player (
     player_id                 INT           NOT NULL CONSTRAINT PK_dim_player PRIMARY KEY,
     player_name               NVARCHAR(200) NOT NULL,
@@ -133,11 +137,29 @@ CREATE TABLE dw.dim_player (
     highest_market_value_eur  DECIMAL(18,2) NULL
 );
 
-WITH p AS (
+WITH scope_players AS (
+    SELECT TRY_CAST(pv.player_id AS INT) AS player_id
+    FROM stg.player_valuations pv
+    JOIN dw.dim_club c ON c.club_id = TRY_CAST(TRY_CAST(pv.current_club_id AS FLOAT) AS INT)
+    WHERE TRY_CONVERT(DATE, LEFT(pv.[date], 10), 23) BETWEEN '2019-07-01' AND '2026-06-30'
+    UNION
+    SELECT TRY_CAST(tr.player_id AS INT)
+    FROM stg.transfers tr
+    JOIN dw.dim_club c ON c.club_id IN (TRY_CAST(TRY_CAST(tr.from_club_id AS FLOAT) AS INT),
+                                        TRY_CAST(TRY_CAST(tr.to_club_id AS FLOAT) AS INT))
+    WHERE TRY_CONVERT(DATE, LEFT(tr.transfer_date, 10), 23) BETWEEN '2020-07-01' AND '2026-06-30'
+    UNION
+    SELECT TRY_CAST(ap.player_id AS INT)
+    FROM stg.appearances ap
+    JOIN stg.games g          ON g.game_id = ap.game_id
+    JOIN dw.dim_competition c ON c.competition_id = g.competition_id
+    JOIN dw.dim_season s      ON s.season_start_year = TRY_CAST(g.season AS SMALLINT)
+),
+p AS (
     SELECT *,
            ROW_NUMBER() OVER (PARTITION BY TRY_CAST(player_id AS INT) ORDER BY (SELECT NULL)) AS rn
     FROM stg.players
-    WHERE TRY_CAST(player_id AS INT) IS NOT NULL
+    WHERE TRY_CAST(player_id AS INT) IN (SELECT player_id FROM scope_players)
 )
 INSERT INTO dw.dim_player
 SELECT TRY_CAST(player_id AS INT),
