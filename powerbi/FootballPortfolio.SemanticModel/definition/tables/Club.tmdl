@@ -1,6 +1,9 @@
 table Club
 	lineageTag: 529cc8a4-7e9f-5b8a-a304-9f4ddb58bd49
 
+	measure 'Selected Club' = SELECTEDVALUE(Club[club_name], "All clubs")
+		lineageTag: 0ef58db5-46f6-5c4f-9fe5-8fb7ec162851
+
 	column club_id
 		dataType: int64
 		isHidden

@@ -2,15 +2,15 @@ table 'Transfer Balance'
 	lineageTag: 9872b8c2-8555-57d4-b1a3-b93bf14ef887
 
 	measure 'Fees Paid' = SUM('Transfer Balance'[fees_paid_eur])
-		formatString: €#,0,,\m
+		formatString: €#,0
 		lineageTag: 82aa319f-342c-5ad4-b249-a1e4b8f5163c
 
 	measure 'Fees Received' = SUM('Transfer Balance'[fees_received_eur])
-		formatString: €#,0,,\m
+		formatString: €#,0
 		lineageTag: 378b727c-e097-545b-a686-979274ed4e4f
 
 	measure 'Net Spend' = [Fees Paid] - [Fees Received]
-		formatString: €#,0,,\m
+		formatString: €#,0
 		lineageTag: 608388b7-414a-55be-b4f2-31f9a3447fe6
 
 	column competition_id
@@ -57,7 +57,7 @@ table 'Transfer Balance'
 
 	column fees_paid_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: bbb11b53-8e60-57d0-bc40-f04c9643c885
 		summarizeBy: none
 		sourceColumn: fees_paid_eur
@@ -66,7 +66,7 @@ table 'Transfer Balance'
 
 	column fees_received_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: 86d22675-01fc-5747-8a7b-fd156658cf27
 		summarizeBy: none
 		sourceColumn: fees_received_eur
@@ -75,7 +75,7 @@ table 'Transfer Balance'
 
 	column net_spend_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: 3d1237a1-fcc0-5feb-8524-9f57af45d3f4
 		summarizeBy: none
 		sourceColumn: net_spend_eur

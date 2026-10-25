@@ -2,7 +2,7 @@ table 'Club KPIs'
 	lineageTag: 3884746c-3f19-5ddc-af11-d211b2cd0ad7
 
 	measure 'KPI Portfolio Value' = SUM('Club KPIs'[total_value_eur])
-		formatString: €#,0,,\m
+		formatString: €#,0
 		lineageTag: 542dec9c-2de6-5a80-9d29-960921a93b66
 
 	measure 'Value-Weighted Age' = AVERAGE('Club KPIs'[value_weighted_age])
@@ -45,7 +45,7 @@ table 'Club KPIs'
 
 	column total_value_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: 0102e773-b7e7-556c-8b41-df00a4c2d581
 		summarizeBy: none
 		sourceColumn: total_value_eur
@@ -70,7 +70,7 @@ table 'Club KPIs'
 
 	column avg_value_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: c068df12-c56e-5875-a903-ffecd2d1f813
 		summarizeBy: none
 		sourceColumn: avg_value_eur
@@ -113,7 +113,7 @@ table 'Club KPIs'
 
 	column value_2020_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: 3a5753c4-a1e2-56b5-852e-235529aebe19
 		summarizeBy: none
 		sourceColumn: value_2020_eur

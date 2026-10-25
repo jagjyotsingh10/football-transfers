@@ -35,13 +35,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Signings"
+                      "Entity": "Club"
                     }
                   },
                   "Property": "club_name"
                 }
               },
-              "queryRef": "Signings.club_name",
+              "queryRef": "Club.club_name",
               "nativeQueryRef": "club_name",
               "displayName": "Signed by"
             },

@@ -9,6 +9,10 @@ table 'Fee vs Value'
 		formatString: 0.00
 		lineageTag: 220aefc1-cf4a-5ed6-bf72-a1ecc3291a02
 
+	measure 'Fee-to-Value Ratio (top 5 buyers)' = CALCULATE([Fee-to-Value Ratio], NOT ISBLANK('Fee vs Value'[buyer_competition_id]))
+		formatString: 0.00
+		lineageTag: 7e90ac21-0de1-5a2f-8de0-743f09b977bd
+
 	column transfer_key
 		dataType: int64
 		lineageTag: 1a903fa0-50f2-5b84-9605-b9aae6150c87
@@ -113,7 +117,7 @@ table 'Fee vs Value'
 
 	column fee_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: ee7725e7-5718-564e-8c57-f852a28d26d2
 		summarizeBy: none
 		sourceColumn: fee_eur
@@ -122,7 +126,7 @@ table 'Fee vs Value'
 
 	column market_value_at_transfer_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: ba16a5c8-d472-5e92-812d-1575d123f59a
 		summarizeBy: none
 		sourceColumn: market_value_at_transfer_eur
@@ -131,7 +135,7 @@ table 'Fee vs Value'
 
 	column premium_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: 226926a5-1831-5d25-9b91-5f2ac602328c
 		summarizeBy: none
 		sourceColumn: premium_eur

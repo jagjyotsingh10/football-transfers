@@ -107,7 +107,7 @@ table Signings
 
 	column fee_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: e53b534f-1ce1-5db4-b122-9c9be5f5721d
 		summarizeBy: none
 		sourceColumn: fee_eur
@@ -116,7 +116,7 @@ table Signings
 
 	column value_at_transfer_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: e487cc25-2391-5093-adf3-0f19bcede9df
 		summarizeBy: none
 		sourceColumn: value_at_transfer_eur
@@ -125,7 +125,7 @@ table Signings
 
 	column latest_value_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: 1e72bd75-6e1d-51b0-8349-04f883addcc3
 		summarizeBy: none
 		sourceColumn: latest_value_eur
@@ -160,7 +160,7 @@ table Signings
 
 	column appreciation_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: 89b92777-eab9-544e-a879-a7764bbc3c6b
 		summarizeBy: none
 		sourceColumn: appreciation_eur
@@ -178,7 +178,7 @@ table Signings
 
 	column value_vs_fee_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: 69746209-797c-51af-92df-d94dc00d21f1
 		summarizeBy: none
 		sourceColumn: value_vs_fee_eur

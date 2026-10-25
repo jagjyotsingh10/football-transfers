@@ -1,0 +1,107 @@
+table 'Portfolio Players'
+	lineageTag: a478a668-9a3b-5027-b581-de6d4c82a1a3
+
+	measure 'Player Value (latest)' = VAR d = CALCULATE(MAX('Portfolio Players'[snapshot_date]), ALL('Portfolio Players')) RETURN CALCULATE(SUM('Portfolio Players'[market_value_eur]), 'Portfolio Players'[snapshot_date] = d)
+		formatString: €#,0,,.0\m
+		lineageTag: 4286089a-3bac-51d0-bc80-ab0532d095b9
+
+	measure 'Player Age (latest)' = VAR d = CALCULATE(MAX('Portfolio Players'[snapshot_date]), ALL('Portfolio Players')) RETURN IF(HASONEVALUE('Portfolio Players'[player_id]), CALCULATE(MAX('Portfolio Players'[age_years]), 'Portfolio Players'[snapshot_date] = d))
+		formatString: 0.0
+		lineageTag: 07312692-597e-554e-ad55-3dd778990ea7
+
+	column snapshot_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 4a560ba8-eb18-56de-b605-339c1c8e9acd
+		summarizeBy: none
+		sourceColumn: snapshot_date
+
+		annotation SummarizationSetBy = User
+
+	column club_id
+		dataType: int64
+		isHidden
+		lineageTag: d30458f6-32c0-53e0-84bb-5594eb31321b
+		summarizeBy: none
+		sourceColumn: club_id
+
+		annotation SummarizationSetBy = User
+
+	column player_id
+		dataType: int64
+		isHidden
+		lineageTag: be601b7e-7a9a-5df3-ad67-7c8aa0447e7d
+		summarizeBy: none
+		sourceColumn: player_id
+
+		annotation SummarizationSetBy = User
+
+	column player_name
+		dataType: string
+		lineageTag: 2e2b1d08-4aaa-5c95-91db-f280a886c999
+		summarizeBy: none
+		sourceColumn: player_name
+
+		annotation SummarizationSetBy = User
+
+	column position
+		dataType: string
+		lineageTag: 13c12e98-1c21-500a-acad-84ed990d98e6
+		summarizeBy: none
+		sourceColumn: position
+
+		annotation SummarizationSetBy = User
+
+	column market_value_eur
+		dataType: double
+		formatString: €#,0,,.0\m
+		lineageTag: 4e875d2d-75e1-57ee-8a9e-42e0057560b5
+		summarizeBy: none
+		sourceColumn: market_value_eur
+
+		annotation SummarizationSetBy = User
+
+	column valuation_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 48dea834-4651-58a2-a391-06ca4f185f66
+		summarizeBy: none
+		sourceColumn: valuation_date
+
+		annotation SummarizationSetBy = User
+
+	column value_year_before_eur
+		dataType: double
+		formatString: €#,0,,.0\m
+		lineageTag: cf78298a-641f-5370-84eb-f3abf43c97b8
+		summarizeBy: none
+		sourceColumn: value_year_before_eur
+
+		annotation SummarizationSetBy = User
+
+	column age_years
+		dataType: double
+		lineageTag: 7c2879bd-74fd-54a9-a34a-47f3cc2e4e6c
+		summarizeBy: none
+		sourceColumn: age_years
+
+		annotation SummarizationSetBy = User
+
+	column value_rank_in_club
+		dataType: int64
+		lineageTag: bb3d4cd3-2852-57c9-a51c-63e191ba6e61
+		summarizeBy: none
+		sourceColumn: value_rank_in_club
+
+		annotation SummarizationSetBy = User
+
+	partition 'Portfolio Players' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    Data = Source{[Schema = "rpt", Item = "vw_portfolio_player"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

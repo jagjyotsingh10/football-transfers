@@ -18,3 +18,4 @@ ref table Signings
 ref table 'Fee vs Value'
 ref table 'Transfer Balance'
 ref table 'Value vs Points'
+ref table 'Portfolio Players'

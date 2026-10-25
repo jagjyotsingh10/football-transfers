@@ -1,0 +1,154 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "31f62855dbd55ca395e2",
+  "position": {
+    "x": 650,
+    "y": 456,
+    "z": 10000,
+    "width": 610,
+    "height": 244,
+    "tabOrder": 10000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Signings"
+                    }
+                  },
+                  "Property": "player_name"
+                }
+              },
+              "queryRef": "Signings.player_name",
+              "nativeQueryRef": "player_name",
+              "displayName": "Player"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Signings"
+                    }
+                  },
+                  "Property": "season_label"
+                }
+              },
+              "queryRef": "Signings.season_label",
+              "nativeQueryRef": "season_label",
+              "displayName": "Season"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Signings"
+                    }
+                  },
+                  "Property": "fee_eur"
+                }
+              },
+              "queryRef": "Signings.fee_eur",
+              "nativeQueryRef": "fee_eur",
+              "displayName": "Fee"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Signings"
+                    }
+                  },
+                  "Property": "value_at_transfer_eur"
+                }
+              },
+              "queryRef": "Signings.value_at_transfer_eur",
+              "nativeQueryRef": "value_at_transfer_eur",
+              "displayName": "Value at signing"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Signings"
+                    }
+                  },
+                  "Property": "latest_value_eur"
+                }
+              },
+              "queryRef": "Signings.latest_value_eur",
+              "nativeQueryRef": "latest_value_eur",
+              "displayName": "Latest value"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Signings"
+                    }
+                  },
+                  "Property": "appreciation_eur"
+                }
+              },
+              "queryRef": "Signings.appreciation_eur",
+              "nativeQueryRef": "appreciation_eur",
+              "displayName": "Gain"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Signings"
+                  }
+                },
+                "Property": "appreciation_eur"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Paid signings and value gained'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

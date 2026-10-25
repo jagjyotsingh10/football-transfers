@@ -1,0 +1,124 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "924a38c3d2ee5edc958b",
+  "position": {
+    "x": 20,
+    "y": 456,
+    "z": 9000,
+    "width": 620,
+    "height": 244,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Portfolio Players"
+                    }
+                  },
+                  "Property": "player_name"
+                }
+              },
+              "queryRef": "Portfolio Players.player_name",
+              "nativeQueryRef": "player_name",
+              "displayName": "Player"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Portfolio Players"
+                    }
+                  },
+                  "Property": "position"
+                }
+              },
+              "queryRef": "Portfolio Players.position",
+              "nativeQueryRef": "position",
+              "displayName": "Position"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Portfolio Players"
+                    }
+                  },
+                  "Property": "Player Age (latest)"
+                }
+              },
+              "queryRef": "Portfolio Players.Player Age (latest)",
+              "nativeQueryRef": "Player Age (latest)",
+              "displayName": "Age"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Portfolio Players"
+                    }
+                  },
+                  "Property": "Player Value (latest)"
+                }
+              },
+              "queryRef": "Portfolio Players.Player Value (latest)",
+              "nativeQueryRef": "Player Value (latest)",
+              "displayName": "Value"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Portfolio Players"
+                  }
+                },
+                "Property": "Player Value (latest)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Squad portfolio, June 2026'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -4,7 +4,7 @@ Football Transfer ROI | Step 7: generate the Power BI project (.pbip)
 Writes a Power BI Project next to this script:
     FootballPortfolio.pbip               open this in Power BI Desktop
     FootballPortfolio.SemanticModel/     tables (rpt views), relationships, DAX measures, as TMDL
-    FootballPortfolio.Report/            theme and 5 report pages, as PBIR JSON
+    FootballPortfolio.Report/            theme, 5 report pages and a club drill-through page, as PBIR JSON
 
 Columns are read from the rpt views in SQL Server, so the model always
 matches the database. Re-run after changing the views or the pages below,
@@ -32,8 +32,8 @@ BASE_THEME_DIR = Path(r"C:\Program Files\Microsoft Power BI Desktop\bin\WebView2
 SCHEMA = "https://developer.microsoft.com/json-schemas/fabric"
 VERSIONS = {"report": "3.0.0", "page": "2.0.0", "visual": "2.4.0"}
 
-EUR_M = "€#,0,,\\m"        # 1234567890 -> €1,235m
-EUR_M1 = "€#,0.0,,\\m"     # 55800000   -> €55.8m
+EUR = "€#,0"              # cards and axes: Power BI scales it itself (€32.6bn, €1.4bn)
+EUR_M1 = "€#,0,,.0\\m"     # tables: 55800000 -> €55.8m (commas left of the decimal point divide by 1,000 each)
 PCT = "0.0%"               # fractions
 PCT_COL = "0.0\\%"         # columns already in percent (45.8 -> 45.8%)
 
@@ -51,7 +51,10 @@ TABLES = [
     ("Fee vs Value", "vw_fee_vs_value"),
     ("Transfer Balance", "vw_club_transfer_balance"),
     ("Value vs Points", "vw_value_vs_points"),
+    ("Portfolio Players", "vw_portfolio_player"),
 ]
+
+DRILL_CLUB = "Arsenal FC"  # club the drill-through page shows when opened directly
 
 # (many side table, column) -> (one side table, column)
 RELATIONSHIPS = [
@@ -71,27 +74,41 @@ RELATIONSHIPS = [
     (("Fee vs Value", "to_club_id"), ("Club", "club_id")),
     (("Transfer Balance", "club_id"), ("Club", "club_id")),
     (("Value vs Points", "club_id"), ("Club", "club_id")),
+    (("Portfolio Players", "club_id"), ("Club", "club_id")),
 ]
 
 LATEST_CP = "VAR d = [Latest Snapshot] RETURN "
 MEASURES = {
     "Club Portfolio": [
-        ("Portfolio Value", "SUM('Club Portfolio'[total_value_eur])", EUR_M),
+        ("Portfolio Value", "SUM('Club Portfolio'[total_value_eur])", EUR),
         ("Latest Snapshot", "CALCULATE(MAX('Club Portfolio'[snapshot_date]), ALL('Club Portfolio'))", "yyyy-mm-dd"),
-        ("Portfolio Value (latest)", LATEST_CP + "CALCULATE([Portfolio Value], 'Club Portfolio'[snapshot_date] = d)", EUR_M),
-        ("Portfolio Value (June 2020)", "CALCULATE([Portfolio Value], 'Club Portfolio'[snapshot_year] = 2020)", EUR_M),
+        ("Portfolio Value (latest)", LATEST_CP + "CALCULATE([Portfolio Value], 'Club Portfolio'[snapshot_date] = d)", EUR),
+        ("Portfolio Value (June 2020)", "CALCULATE([Portfolio Value], 'Club Portfolio'[snapshot_year] = 2020)", EUR),
         ("Growth since June 2020",
          "DIVIDE([Portfolio Value (latest)] - [Portfolio Value (June 2020)], [Portfolio Value (June 2020)])", PCT),
         ("Clubs (latest)", LATEST_CP + "CALCULATE(DISTINCTCOUNT('Club Portfolio'[club_id]), 'Club Portfolio'[snapshot_date] = d)", "0"),
         ("Avg Value per Player (latest)",
          LATEST_CP + "CALCULATE(DIVIDE(SUM('Club Portfolio'[total_value_eur]), SUM('Club Portfolio'[squad_size])), 'Club Portfolio'[snapshot_date] = d)",
-         EUR_M1),
+         EUR),
         ("Top-5 Share (latest)",
          LATEST_CP + "CALCULATE(DIVIDE(SUM('Club Portfolio'[top5_value_eur]), SUM('Club Portfolio'[total_value_eur])), 'Club Portfolio'[snapshot_date] = d)",
          PCT),
         ("Declining Exposure", "DIVIDE(SUM('Club Portfolio'[declining_value_eur]), SUM('Club Portfolio'[value_with_history_eur]))", PCT),
         ("Declining Exposure (latest)", LATEST_CP + "CALCULATE([Declining Exposure], 'Club Portfolio'[snapshot_date] = d)", PCT),
-        ("Value Lost (latest)", LATEST_CP + "CALCULATE(SUM('Club Portfolio'[value_lost_eur]), 'Club Portfolio'[snapshot_date] = d)", EUR_M1),
+        ("Value Lost (latest)", LATEST_CP + "CALCULATE(SUM('Club Portfolio'[value_lost_eur]), 'Club Portfolio'[snapshot_date] = d)", EUR),
+        ("Value Rank in League (latest)", LATEST_CP + "CALCULATE(MIN('Club Portfolio'[value_rank_in_league]), 'Club Portfolio'[snapshot_date] = d)", "0"),
+    ],
+    "Club": [
+        ("Selected Club", "SELECTEDVALUE(Club[club_name], \"All clubs\")", None),
+    ],
+    "Portfolio Players": [
+        ("Player Value (latest)",
+         "VAR d = CALCULATE(MAX('Portfolio Players'[snapshot_date]), ALL('Portfolio Players')) "
+         "RETURN CALCULATE(SUM('Portfolio Players'[market_value_eur]), 'Portfolio Players'[snapshot_date] = d)", EUR_M1),
+        ("Player Age (latest)",
+         "VAR d = CALCULATE(MAX('Portfolio Players'[snapshot_date]), ALL('Portfolio Players')) "
+         "RETURN IF(HASONEVALUE('Portfolio Players'[player_id]), "  # blank on total rows: a summed age means nothing
+         "CALCULATE(MAX('Portfolio Players'[age_years]), 'Portfolio Players'[snapshot_date] = d))", "0.0"),
     ],
     "Club Volatility": [
         ("Portfolio Volatility (latest)",
@@ -99,10 +116,10 @@ MEASURES = {
          "RETURN CALCULATE(AVERAGE('Club Volatility'[portfolio_volatility_pct]), 'Club Volatility'[snapshot_date] = d) / 100", PCT),
     ],
     "Composition": [
-        ("Age Band Value", "CALCULATE(SUM(Composition[value_eur]), Composition[dimension] = \"Age band\")", EUR_M),
+        ("Age Band Value", "CALCULATE(SUM(Composition[value_eur]), Composition[dimension] = \"Age band\")", EUR),
     ],
     "Club KPIs": [
-        ("KPI Portfolio Value", "SUM('Club KPIs'[total_value_eur])", EUR_M),
+        ("KPI Portfolio Value", "SUM('Club KPIs'[total_value_eur])", EUR),
         ("Value-Weighted Age", "AVERAGE('Club KPIs'[value_weighted_age])", "0.0"),
     ],
     "Signings": [
@@ -117,11 +134,14 @@ MEASURES = {
         ("Fee-to-Value Ratio",
          "DIVIDE(CALCULATE(SUM('Fee vs Value'[fee_eur]), 'Fee vs Value'[market_value_at_transfer_eur] > 0), "
          "CALCULATE(SUM('Fee vs Value'[market_value_at_transfer_eur]), 'Fee vs Value'[market_value_at_transfer_eur] > 0))", "0.00"),
+        # by buying league: sales to clubs outside the top 5 have no buying league and would show as (Blank)
+        ("Fee-to-Value Ratio (top 5 buyers)",
+         "CALCULATE([Fee-to-Value Ratio], NOT ISBLANK('Fee vs Value'[buyer_competition_id]))", "0.00"),
     ],
     "Transfer Balance": [
-        ("Fees Paid", "SUM('Transfer Balance'[fees_paid_eur])", EUR_M),
-        ("Fees Received", "SUM('Transfer Balance'[fees_received_eur])", EUR_M),
-        ("Net Spend", "[Fees Paid] - [Fees Received]", EUR_M),
+        ("Fees Paid", "SUM('Transfer Balance'[fees_paid_eur])", EUR),
+        ("Fees Received", "SUM('Transfer Balance'[fees_received_eur])", EUR),
+        ("Net Spend", "[Fees Paid] - [Fees Received]", EUR),
     ],
     "Value vs Points": [
         ("Avg Points per Game", "AVERAGE('Value vs Points'[points_per_game])", "0.00"),
@@ -180,7 +200,10 @@ def read_columns(server: str, driver: str) -> dict[str, list[tuple[str, str]]]:
 def table_tmdl(table: str, view: str, columns: list[tuple[str, str]]) -> str:
     lines = [f"table {q(table)}", f"\tlineageTag: {tag(table)}", ""]
     for name, expr, fmt in MEASURES.get(table, []):
-        lines += [f"\tmeasure {q(name)} = {expr}", f"\t\tformatString: {fmt}", f"\t\tlineageTag: {tag(table, 'm', name)}", ""]
+        lines.append(f"\tmeasure {q(name)} = {expr}")
+        if fmt:
+            lines.append(f"\t\tformatString: {fmt}")
+        lines += [f"\t\tlineageTag: {tag(table, 'm', name)}", ""]
     for col, dtype in columns:
         lines += [f"\tcolumn {q(col)}", f"\t\tdataType: {dtype}"]
         fmt = column_format(col, dtype)
@@ -208,8 +231,7 @@ def table_tmdl(table: str, view: str, columns: list[tuple[str, str]]) -> str:
 
 def write_semantic_model(root: Path, columns: dict, server: str) -> None:
     sm = root / f"{NAME}.SemanticModel"
-    if sm.exists():
-        shutil.rmtree(sm)
+    clear_keeping_local(sm)
     (sm / "definition" / "tables").mkdir(parents=True)
     write_json(sm / "definition.pbism", {
         "$schema": f"{SCHEMA}/item/semanticModel/definitionProperties/1.0.0/schema.json",
@@ -264,6 +286,10 @@ def lit(value) -> dict:
     return {"expr": {"Literal": {"Value": v}}}
 
 
+# cards scale euros automatically; one decimal keeps €32.6bn from rounding to €33bn
+ONE_DECIMAL = {"labels": [{"properties": {"labelPrecision": {"expr": {"Literal": {"Value": "1L"}}}}}]}
+
+
 def col(entity: str, prop: str) -> dict:
     return {"Column": {"Expression": {"SourceRef": {"Entity": entity}}, "Property": prop}}
 
@@ -283,13 +309,43 @@ def proj(field: dict, display: str | None = None) -> dict:
 
 
 class Page:
-    def __init__(self, key: str, tab: str, title: str, subtitle: str):
+    def __init__(self, key: str, tab: str, title: str, subtitle: str, league_slicer: bool = True, header_x: int = 20):
         self.name = tag("page", key).replace("-", "")[:20]
         self.tab = tab  # page tab name
+        self.extra: dict = {}  # extra page.json properties (drill-through binding)
         self.visuals: list[dict] = []
-        self.textbox(key + "-header", 20, 10, 940, 64, title, subtitle)
-        self.visual(key + "-league", "slicer", (980, 14, 280, 56), {"Values": [proj(col("League", "competition_name"), "League")]},
-                    objects={"data": [{"properties": {"mode": lit("Dropdown")}}]}, title="League")
+        self.textbox(key + "-header", header_x, 10, 960 - header_x, 64, title, subtitle)
+        if league_slicer:  # no container title: the slicer's own header already says "League"
+            self.visual(key + "-league", "slicer", (980, 10, 280, 64), {"Values": [proj(col("League", "competition_name"), "League")]},
+                        objects={"data": [{"properties": {"mode": lit("Dropdown")}}]})
+
+    def drillthrough(self, field: dict, value: str) -> None:
+        """Make this a drill-through page on `field`, opened on `value` by default."""
+        filter_name = tag("filter", self.name).replace("-", "")[:20]
+        entity, prop = field["Column"]["Expression"]["SourceRef"]["Entity"], field["Column"]["Property"]
+        self.extra = {
+            "type": "Drillthrough",
+            "pageBinding": {"name": tag("binding", self.name).replace("-", "")[:20], "type": "Drillthrough",
+                            "parameters": [{"name": tag("param", self.name).replace("-", "")[:20],
+                                            "boundFilter": filter_name, "fieldExpr": field}]},
+            "filterConfig": {"filters": [{
+                "name": filter_name,
+                "field": field,
+                "type": "Categorical",
+                "filter": {"Version": 2, "From": [{"Name": "c", "Entity": entity, "Type": 0}],
+                           "Where": [{"Condition": {"In": {
+                               "Expressions": [{"Column": {"Expression": {"SourceRef": {"Source": "c"}}, "Property": prop}}],
+                               "Values": [[{"Literal": {"Value": "'" + value.replace("'", "''") + "'"}}]]}}}]},
+                "howCreated": "Drillthrough",
+            }]},
+        }
+
+    def back_button(self, key: str, pos: tuple) -> None:
+        self._container(key, pos, {
+            "visualType": "actionButton",
+            "objects": {"icon": [{"properties": {"shapeType": lit("back")}, "selector": {"id": "default"}}]},
+            "visualContainerObjects": {"visualLink": [{"properties": {"show": lit(True), "type": lit("Back")}}]},
+        })
 
     def _container(self, key: str, pos: tuple, visual: dict) -> None:
         x, y, w, h = pos
@@ -323,6 +379,7 @@ class Page:
 
 
 def build_pages() -> list[Page]:
+    # Club names always come from the Club table, so drill-through to the Club page works from any visual
     CP, SG, FV, TB, VP, KP, VO, CO = ("Club Portfolio", "Signings", "Fee vs Value", "Transfer Balance",
                                       "Value vs Points", "Club KPIs", "Club Volatility", "Composition")
     pages = []
@@ -334,21 +391,22 @@ def build_pages() -> list[Page]:
                                     ("Growth since June 2020", "Growth since June 2020"),
                                     ("Avg Value per Player (latest)", "Average value per player"),
                                     ("Clubs (latest)", "Clubs")]):
-        p.visual(f"overview-card{i}", "card", (20 + i * 310, 84, 300, 100), {"Values": [proj(meas(CP, m), label)]})
+        p.visual(f"overview-card{i}", "card", (20 + i * 310, 84, 300, 100), {"Values": [proj(meas(CP, m), label)]},
+                 objects=ONE_DECIMAL if m.startswith(("Portfolio Value", "Avg Value")) else None)
     p.visual("overview-line", "lineChart", (20, 196, 760, 504),
              {"Category": [proj(col(CP, "closes_season_label"), "Season ending")],
               "Series": [proj(col(CP, "competition_name"), "League")],
               "Y": [proj(meas(CP, "Portfolio Value"), "Portfolio value")]},
              sort=(col(CP, "closes_season_label"), "Ascending"), title="Total portfolio value by league (Q1)")
     p.visual("overview-bar", "clusteredBarChart", (790, 196, 470, 504),
-             {"Category": [proj(col(CP, "club_name"), "Club")], "Y": [proj(meas(CP, "Portfolio Value (latest)"), "Portfolio value")]},
+             {"Category": [proj(col("Club", "club_name"), "Club")], "Y": [proj(meas(CP, "Portfolio Value (latest)"), "Portfolio value")]},
              sort=(meas(CP, "Portfolio Value (latest)"), "Descending"), title="Most valuable portfolios, June 2026 (Q5)")
     pages.append(p)
 
     # 2. Club benchmark (Q5, Q6, Q10)
     p = Page("benchmark", "Club benchmark", "Club benchmark", "Value, growth, concentration and age at 30 June 2026, clubs in 2025/26")
     p.visual("benchmark-table", "tableEx", (20, 84, 1240, 316),
-             {"Values": [proj(col(KP, "club_name"), "Club"), proj(col(KP, "competition_name"), "League"),
+             {"Values": [proj(col("Club", "club_name"), "Club"), proj(col(KP, "competition_name"), "League"),
                          proj(col(KP, "total_value_eur"), "Value"), proj(col(KP, "value_rank_in_league"), "Rank in league"),
                          proj(col(KP, "cagr_2020_2026_pct"), "Growth per year since 2020"),
                          proj(col(KP, "growth_last_year_pct"), "Growth last year"),
@@ -357,7 +415,7 @@ def build_pages() -> list[Page]:
                          proj(col(KP, "avg_value_index_league"), "Avg value vs league (100 = avg)")]},
              sort=(col(KP, "total_value_eur"), "Descending"), title="Club benchmark (Q5)")
     p.visual("benchmark-scatter", "scatterChart", (20, 410, 400, 290),
-             {"Category": [proj(col(KP, "club_name"), "Club")],
+             {"Category": [proj(col("Club", "club_name"), "Club")],
               "X": [proj(meas(KP, "Value-Weighted Age"), "Value-weighted age")],
               "Y": [proj(meas(KP, "KPI Portfolio Value"), "Portfolio value")]},
              title="Age profile vs portfolio value (Q6)")
@@ -367,7 +425,7 @@ def build_pages() -> list[Page]:
               "Y": [proj(meas(CO, "Age Band Value"), "Value")]},
              sort=(col(CO, "closes_season_label"), "Ascending"), title="Share of value by age band (Q6)")
     p.visual("benchmark-avg", "clusteredBarChart", (850, 410, 410, 290),
-             {"Category": [proj(col(CP, "club_name"), "Club")],
+             {"Category": [proj(col("Club", "club_name"), "Club")],
               "Y": [proj(meas(CP, "Avg Value per Player (latest)"), "Avg value per player")]},
              sort=(meas(CP, "Avg Value per Player (latest)"), "Descending"), title="Average value per player, June 2026 (Q10)")
     pages.append(p)
@@ -375,7 +433,7 @@ def build_pages() -> list[Page]:
     # 3. Risk (Q2, Q4, Q9)
     p = Page("risk", "Risk", "Portfolio risk", "Concentration, exposure to falling values and valuation volatility")
     p.visual("risk-conc", "clusteredBarChart", (20, 84, 400, 616),
-             {"Category": [proj(col(CP, "club_name"), "Club")], "Y": [proj(meas(CP, "Top-5 Share (latest)"), "Top-5 share")]},
+             {"Category": [proj(col("Club", "club_name"), "Club")], "Y": [proj(meas(CP, "Top-5 Share (latest)"), "Top-5 share")]},
              sort=(meas(CP, "Top-5 Share (latest)"), "Descending"), title="Value held by top 5 players, June 2026 (Q2)")
     p.visual("risk-exposure-trend", "lineChart", (430, 84, 420, 300),
              {"Category": [proj(col(CP, "closes_season_label"), "Season ending")],
@@ -383,32 +441,32 @@ def build_pages() -> list[Page]:
               "Y": [proj(meas(CP, "Declining Exposure"), "Declining exposure")]},
              sort=(col(CP, "closes_season_label"), "Ascending"), title="Share of value in declining players (Q4)")
     p.visual("risk-exposure", "clusteredBarChart", (430, 394, 420, 306),
-             {"Category": [proj(col(CP, "club_name"), "Club")], "Y": [proj(meas(CP, "Declining Exposure (latest)"), "Declining exposure")]},
+             {"Category": [proj(col("Club", "club_name"), "Club")], "Y": [proj(meas(CP, "Declining Exposure (latest)"), "Declining exposure")]},
              sort=(meas(CP, "Declining Exposure (latest)"), "Descending"), title="Most exposed to declining values, June 2026 (Q4)")
     p.visual("risk-vol", "clusteredBarChart", (860, 84, 400, 616),
-             {"Category": [proj(col(VO, "club_name"), "Club")], "Y": [proj(meas(VO, "Portfolio Volatility (latest)"), "Volatility")]},
+             {"Category": [proj(col("Club", "club_name"), "Club")], "Y": [proj(meas(VO, "Portfolio Volatility (latest)"), "Volatility")]},
              sort=(meas(VO, "Portfolio Volatility (latest)"), "Descending"), title="Portfolio volatility per revaluation (Q9)")
     pages.append(p)
 
     # 4. Transfers (Q3, Q7, Q8)
     p = Page("transfers", "Transfers", "Transfers", "Paid signings 2020/21 to 2025/26: value gained, fees vs market value, net spend")
     p.visual("transfers-signings", "tableEx", (20, 84, 760, 316),
-             {"Values": [proj(col(SG, "player_name"), "Player"), proj(col(SG, "club_name"), "Signed by"),
+             {"Values": [proj(col(SG, "player_name"), "Player"), proj(col("Club", "club_name"), "Signed by"),
                          proj(col(SG, "season_label"), "Season"), proj(col(SG, "fee_eur"), "Fee"),
                          proj(col(SG, "value_at_transfer_eur"), "Value at signing"),
                          proj(col(SG, "latest_value_eur"), "Latest value at club"),
                          proj(col(SG, "appreciation_eur"), "Gain")]},
              sort=(col(SG, "appreciation_eur"), "Descending"), title="Biggest value gains after signing (Q3)")
     p.visual("transfers-net", "clusteredBarChart", (790, 84, 470, 616),
-             {"Category": [proj(col(TB, "club_name"), "Club")], "Y": [proj(meas(TB, "Net Spend"), "Net spend")]},
+             {"Category": [proj(col("Club", "club_name"), "Club")], "Y": [proj(meas(TB, "Net Spend"), "Net spend")]},
              sort=(meas(TB, "Net Spend"), "Descending"), title="Fees paid minus received, 2020/21-2025/26 (Q7)")
     p.visual("transfers-bands", "clusteredColumnChart", (20, 410, 370, 290),
              {"Category": [proj(col(FV, "price_band"), "Fee vs market value")], "Y": [proj(meas(FV, "Deals"), "Deals")]},
              sort=(meas(FV, "Deals"), "Descending"), title="Fee vs market value at transfer (Q8)")
     p.visual("transfers-ratio", "clusteredBarChart", (400, 410, 380, 290),
              {"Category": [proj(col("League", "competition_name"), "Buying league")],
-              "Y": [proj(meas(FV, "Fee-to-Value Ratio"), "Fee ÷ market value")]},
-             sort=(meas(FV, "Fee-to-Value Ratio"), "Descending"), title="Fee paid per €1 of market value (Q8)")
+              "Y": [proj(meas(FV, "Fee-to-Value Ratio (top 5 buyers)"), "Fee ÷ market value")]},
+             sort=(meas(FV, "Fee-to-Value Ratio (top 5 buyers)"), "Descending"), title="Fee paid per €1 of market value (Q8)")
     pages.append(p)
 
     # 5. Value vs points (Q11)
@@ -427,11 +485,46 @@ def build_pages() -> list[Page]:
               "Y": [proj(meas(VP, "Avg Points per Game"), "Points per game")]},
              sort=(col(VP, "value_rank"), "Ascending"), title="Points per game by value rank (Q11)")
     p.visual("points-table", "tableEx", (650, 384, 610, 316),
-             {"Values": [proj(col(VP, "club_name"), "Club"), proj(col(VP, "season_label"), "Season"),
+             {"Values": [proj(col("Club", "club_name"), "Club"), proj(col(VP, "season_label"), "Season"),
                          proj(col(VP, "value_rank"), "Value rank"), proj(col(VP, "position"), "Finished"),
                          proj(col(VP, "points"), "Points"), proj(col(VP, "expected_points"), "Expected"),
                          proj(col(VP, "points_vs_expected"), "vs expected")]},
              sort=(col(VP, "points_vs_expected"), "Descending"), title="Points above or below what value predicts (Q11)")
+    pages.append(p)
+
+    # 6. Club drill-through: right-click a club on any page -> Drill through -> Club
+    PP = "Portfolio Players"
+    p = Page("club", "Club", "Club drill-through",
+             "Right-click a club on any page and choose Drill through > Club. Ctrl+click the arrow to go back.",
+             league_slicer=False, header_x=70)
+    p.drillthrough(col("Club", "club_name"), DRILL_CLUB)
+    p.back_button("club-back", (20, 22, 40, 40))
+    for i, (table, m, label, x, w) in enumerate([
+            ("Club", "Selected Club", "Club", 20, 300),
+            (CP, "Portfolio Value (latest)", "Portfolio value, June 2026", 330, 230),
+            (CP, "Value Rank in League (latest)", "Value rank in league", 570, 230),
+            (CP, "Growth since June 2020", "Growth since June 2020", 810, 230),
+            (CP, "Top-5 Share (latest)", "Top-5 share", 1050, 210)]):
+        p.visual(f"club-card{i}", "card", (x, 84, w, 100), {"Values": [proj(meas(table, m), label)]},
+                 objects=ONE_DECIMAL if m.startswith("Portfolio Value") else None)
+    p.visual("club-trend", "lineChart", (20, 196, 620, 250),
+             {"Category": [proj(col(CP, "closes_season_label"), "Season ending")],
+              "Y": [proj(meas(CP, "Portfolio Value"), "Portfolio value")]},
+             sort=(col(CP, "closes_season_label"), "Ascending"), title="Portfolio value over time")
+    p.visual("club-seasons", "tableEx", (650, 196, 610, 250),
+             {"Values": [proj(col(VP, "season_label"), "Season"), proj(col(VP, "value_rank"), "Value rank"),
+                         proj(col(VP, "position"), "Finished"), proj(col(VP, "points"), "Points"),
+                         proj(col(VP, "expected_points"), "Expected"), proj(col(VP, "points_vs_expected"), "vs expected")]},
+             sort=(col(VP, "season_label"), "Ascending"), title="Season by season: value rank vs finish")
+    p.visual("club-squad", "tableEx", (20, 456, 620, 244),
+             {"Values": [proj(col(PP, "player_name"), "Player"), proj(col(PP, "position"), "Position"),
+                         proj(meas(PP, "Player Age (latest)"), "Age"), proj(meas(PP, "Player Value (latest)"), "Value")]},
+             sort=(meas(PP, "Player Value (latest)"), "Descending"), title="Squad portfolio, June 2026")
+    p.visual("club-signings", "tableEx", (650, 456, 610, 244),
+             {"Values": [proj(col(SG, "player_name"), "Player"), proj(col(SG, "season_label"), "Season"),
+                         proj(col(SG, "fee_eur"), "Fee"), proj(col(SG, "value_at_transfer_eur"), "Value at signing"),
+                         proj(col(SG, "latest_value_eur"), "Latest value"), proj(col(SG, "appreciation_eur"), "Gain")]},
+             sort=(col(SG, "appreciation_eur"), "Descending"), title="Paid signings and value gained")
     pages.append(p)
     return pages
 
@@ -454,8 +547,7 @@ THEME = {
 
 def write_report(root: Path) -> None:
     rp = root / f"{NAME}.Report"
-    if rp.exists():
-        shutil.rmtree(rp)
+    clear_keeping_local(rp)
     d = rp / "definition"
     (d / "pages").mkdir(parents=True)
     write_json(rp / "definition.pbir", {
@@ -498,11 +590,22 @@ def write_report(root: Path) -> None:
             "$schema": f"{SCHEMA}/item/report/definition/page/{VERSIONS['page']}/schema.json",
             "name": p.name, "displayName": p.tab,
             "displayOption": "FitToPage", "height": 720, "width": 1280,
+            **p.extra,
         })
         for v in p.visuals:
             vd = pd / "visuals" / v["name"]
             vd.mkdir()
             write_json(vd / "visual.json", v)
+
+
+def clear_keeping_local(folder: Path) -> None:
+    """Delete a generated folder's contents, but keep .pbi (Power BI's data cache and local settings)."""
+    if not folder.exists():
+        return
+    for child in folder.iterdir():
+        if child.name == ".pbi":
+            continue
+        shutil.rmtree(child) if child.is_dir() else child.unlink()
 
 
 def write_json(path: Path, obj) -> None:
@@ -526,7 +629,7 @@ def main():
     })
     n_measures = sum(len(m) for m in MEASURES.values())
     print(f"Wrote {NAME}.pbip: {len(TABLES)} tables, {len(RELATIONSHIPS)} relationships, {n_measures} measures, "
-          f"{len(build_pages())} pages")
+          f"{len(build_pages())} pages (including the club drill-through)")
 
 
 if __name__ == "__main__":

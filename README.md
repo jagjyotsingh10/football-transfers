@@ -104,8 +104,29 @@ Reporting views (`rpt` schema, for Power BI): `vw_league_table`, `vw_value_vs_po
 | Risk | Q2, Q4, Q9 | Top-5 concentration, declining exposure over time and by club, volatility |
 | Transfers | Q3, Q7, Q8 | Biggest value gains after signing, net spend, fee vs market value |
 | Value vs points | Q11 | Title and top-4 rates, value vs points per game, points by value rank, over/underperformers |
+| Club (drill-through) | all | One club: headline cards, value over time, season-by-season finish vs value, current squad, signings |
 
-Every page has a league slicer. The model has 10 tables, 16 relationships and 27 DAX measures; `check_model.ps1` confirmed 9 of 9 headline numbers match SQL exactly.
+Every main page has a league slicer. To see one club, right-click it on any page and choose **Drill through → Club**. The model has 11 tables, 17 relationships and 32 DAX measures; `check_model.ps1` confirmed 9 of 9 headline numbers match SQL exactly.
+
+### Screenshots
+
+**Overview**
+![Overview: headline cards, total value by league, most valuable portfolios](docs/screenshots/01-overview.png)
+
+**Club benchmark**
+![Club benchmark: table, age vs value, age bands, average value per player](docs/screenshots/02-club-benchmark.png)
+
+**Risk**
+![Risk: top-5 concentration, declining exposure, volatility](docs/screenshots/03-risk.png)
+
+**Transfers**
+![Transfers: value gains after signing, fee vs market value, net spend](docs/screenshots/04-transfers.png)
+
+**Value vs points**
+![Value vs points: title and top-4 rates, value vs points per game, over and underperformers](docs/screenshots/05-value-vs-points.png)
+
+**Club drill-through (Arsenal)**
+![Club drill-through for Arsenal FC](docs/screenshots/06-club.png)
 
 ---
 
@@ -131,6 +152,5 @@ See `docs/data_quality_log.md`. All 9 checks passed on the 2026-10-25 download: 
 ## Roadmap
 - [x] **Week 1:** Database, load pipeline, star schema, data quality checks
 - [x] **Week 2:** Portfolio model, league tables, reporting views, answers to the 11 questions
-- [x] **Week 3:** Power BI: 5 pages (overview, club benchmark, risk, transfers, value vs points), model verified against SQL
-- [ ] **Week 3 polish:** visual review, screenshots
+- [x] **Week 3:** Power BI: 5 pages (overview, club benchmark, risk, transfers, value vs points) plus a club drill-through, model verified against SQL, screenshots
 - [ ] **Week 4:** Recommendations, screenshots, walkthrough

@@ -2,7 +2,7 @@ table 'Club Portfolio'
 	lineageTag: 7ccd48a5-2036-5a12-930f-07555c65d10c
 
 	measure 'Portfolio Value' = SUM('Club Portfolio'[total_value_eur])
-		formatString: €#,0,,\m
+		formatString: €#,0
 		lineageTag: 5deebe3f-7ea1-565d-b3b1-65aeb0980ec3
 
 	measure 'Latest Snapshot' = CALCULATE(MAX('Club Portfolio'[snapshot_date]), ALL('Club Portfolio'))
@@ -10,11 +10,11 @@ table 'Club Portfolio'
 		lineageTag: ca81af19-cf36-5e2a-8396-0432eaaebfd8
 
 	measure 'Portfolio Value (latest)' = VAR d = [Latest Snapshot] RETURN CALCULATE([Portfolio Value], 'Club Portfolio'[snapshot_date] = d)
-		formatString: €#,0,,\m
+		formatString: €#,0
 		lineageTag: 9bc4282c-1ce7-539c-97b1-89f28817f0a2
 
 	measure 'Portfolio Value (June 2020)' = CALCULATE([Portfolio Value], 'Club Portfolio'[snapshot_year] = 2020)
-		formatString: €#,0,,\m
+		formatString: €#,0
 		lineageTag: 18bc7da4-59fb-5520-b7e4-23da44d12ed9
 
 	measure 'Growth since June 2020' = DIVIDE([Portfolio Value (latest)] - [Portfolio Value (June 2020)], [Portfolio Value (June 2020)])
@@ -26,7 +26,7 @@ table 'Club Portfolio'
 		lineageTag: 91353e7f-2aaf-5cd7-930d-c62132943ede
 
 	measure 'Avg Value per Player (latest)' = VAR d = [Latest Snapshot] RETURN CALCULATE(DIVIDE(SUM('Club Portfolio'[total_value_eur]), SUM('Club Portfolio'[squad_size])), 'Club Portfolio'[snapshot_date] = d)
-		formatString: €#,0.0,,\m
+		formatString: €#,0
 		lineageTag: 96eccf38-6c3a-5f71-ad95-0b28642e6e9a
 
 	measure 'Top-5 Share (latest)' = VAR d = [Latest Snapshot] RETURN CALCULATE(DIVIDE(SUM('Club Portfolio'[top5_value_eur]), SUM('Club Portfolio'[total_value_eur])), 'Club Portfolio'[snapshot_date] = d)
@@ -42,8 +42,12 @@ table 'Club Portfolio'
 		lineageTag: bcb858c6-5f92-52de-a4c6-dd597e674d1a
 
 	measure 'Value Lost (latest)' = VAR d = [Latest Snapshot] RETURN CALCULATE(SUM('Club Portfolio'[value_lost_eur]), 'Club Portfolio'[snapshot_date] = d)
-		formatString: €#,0.0,,\m
+		formatString: €#,0
 		lineageTag: c0459bf3-ce9a-577b-b759-1d6a57a0fed4
+
+	measure 'Value Rank in League (latest)' = VAR d = [Latest Snapshot] RETURN CALCULATE(MIN('Club Portfolio'[value_rank_in_league]), 'Club Portfolio'[snapshot_date] = d)
+		formatString: 0
+		lineageTag: 63f2279b-adcb-57e1-a594-a64cd93a3c30
 
 	column snapshot_date
 		dataType: dateTime
@@ -130,7 +134,7 @@ table 'Club Portfolio'
 
 	column total_value_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: 34213d64-0f68-56ef-8833-eb761c0d88ef
 		summarizeBy: none
 		sourceColumn: total_value_eur
@@ -139,7 +143,7 @@ table 'Club Portfolio'
 
 	column avg_value_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: 36075947-2eae-51b4-a748-83694ac79a2a
 		summarizeBy: none
 		sourceColumn: avg_value_eur
@@ -148,7 +152,7 @@ table 'Club Portfolio'
 
 	column top5_value_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: 6432fa12-75b1-5025-95a1-2fb2f4372792
 		summarizeBy: none
 		sourceColumn: top5_value_eur
@@ -166,7 +170,7 @@ table 'Club Portfolio'
 
 	column value_change_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: cb6ba8c6-9412-562b-b639-a7ba14eb65da
 		summarizeBy: none
 		sourceColumn: value_change_eur
@@ -192,7 +196,7 @@ table 'Club Portfolio'
 
 	column value_with_history_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: 1024f071-61fc-5edb-83a8-3b618b0d34c8
 		summarizeBy: none
 		sourceColumn: value_with_history_eur
@@ -201,7 +205,7 @@ table 'Club Portfolio'
 
 	column declining_value_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: 310d9f92-8b6d-5346-a0b7-8aa9925754d6
 		summarizeBy: none
 		sourceColumn: declining_value_eur
@@ -210,7 +214,7 @@ table 'Club Portfolio'
 
 	column value_lost_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: eb2dc5f4-cdb7-593a-9548-2765454abcce
 		summarizeBy: none
 		sourceColumn: value_lost_eur

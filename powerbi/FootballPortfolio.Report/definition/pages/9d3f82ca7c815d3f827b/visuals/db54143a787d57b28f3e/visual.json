@@ -1,0 +1,39 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "db54143a787d57b28f3e",
+  "position": {
+    "x": 1050,
+    "y": 84,
+    "z": 6000,
+    "width": 210,
+    "height": 100,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Portfolio"
+                    }
+                  },
+                  "Property": "Top-5 Share (latest)"
+                }
+              },
+              "queryRef": "Club Portfolio.Top-5 Share (latest)",
+              "nativeQueryRef": "Top-5 Share (latest)",
+              "displayName": "Top-5 share"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

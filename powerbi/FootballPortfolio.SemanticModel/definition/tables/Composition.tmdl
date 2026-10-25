@@ -2,7 +2,7 @@ table Composition
 	lineageTag: 81724422-ea94-52d8-8328-2a50ed05a5ec
 
 	measure 'Age Band Value' = CALCULATE(SUM(Composition[value_eur]), Composition[dimension] = "Age band")
-		formatString: €#,0,,\m
+		formatString: €#,0
 		lineageTag: 393714b0-d9e7-5255-a3b0-b599e8e9e777
 
 	column snapshot_date
@@ -74,7 +74,7 @@ table Composition
 
 	column value_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: fa26f489-113d-5213-9373-ea33fa962d2b
 		summarizeBy: none
 		sourceColumn: value_eur

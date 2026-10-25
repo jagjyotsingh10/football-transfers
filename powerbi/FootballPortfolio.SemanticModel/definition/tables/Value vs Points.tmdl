@@ -125,7 +125,7 @@ table 'Value vs Points'
 
 	column season_start_value_eur
 		dataType: double
-		formatString: €#,0.0,,\m
+		formatString: €#,0,,.0\m
 		lineageTag: 051f0ddd-eb4e-5d08-9629-42d55892b0b6
 		summarizeBy: none
 		sourceColumn: season_start_value_eur

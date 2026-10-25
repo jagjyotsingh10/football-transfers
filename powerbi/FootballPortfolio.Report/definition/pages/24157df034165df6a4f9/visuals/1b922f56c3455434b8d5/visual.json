@@ -20,13 +20,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Club Volatility"
+                      "Entity": "Club"
                     }
                   },
                   "Property": "club_name"
                 }
               },
-              "queryRef": "Club Volatility.club_name",
+              "queryRef": "Club.club_name",
               "nativeQueryRef": "club_name",
               "displayName": "Club"
             }

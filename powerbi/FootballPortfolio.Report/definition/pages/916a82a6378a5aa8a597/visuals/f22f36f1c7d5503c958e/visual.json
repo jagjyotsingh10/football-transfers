@@ -3,10 +3,10 @@
   "name": "f22f36f1c7d5503c958e",
   "position": {
     "x": 980,
-    "y": 14,
+    "y": 10,
     "z": 1000,
     "width": 280,
-    "height": 56,
+    "height": 64,
     "tabOrder": 1000
   },
   "visual": {
@@ -43,28 +43,6 @@
               "expr": {
                 "Literal": {
                   "Value": "'Dropdown'"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    "visualContainerObjects": {
-      "title": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'League'"
                 }
               }
             }

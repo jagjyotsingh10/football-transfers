@@ -42,11 +42,11 @@
                       "Entity": "Fee vs Value"
                     }
                   },
-                  "Property": "Fee-to-Value Ratio"
+                  "Property": "Fee-to-Value Ratio (top 5 buyers)"
                 }
               },
-              "queryRef": "Fee vs Value.Fee-to-Value Ratio",
-              "nativeQueryRef": "Fee-to-Value Ratio",
+              "queryRef": "Fee vs Value.Fee-to-Value Ratio (top 5 buyers)",
+              "nativeQueryRef": "Fee-to-Value Ratio (top 5 buyers)",
               "displayName": "Fee ÷ market value"
             }
           ]
@@ -62,7 +62,7 @@
                     "Entity": "Fee vs Value"
                   }
                 },
-                "Property": "Fee-to-Value Ratio"
+                "Property": "Fee-to-Value Ratio (top 5 buyers)"
               }
             },
             "direction": "Descending"

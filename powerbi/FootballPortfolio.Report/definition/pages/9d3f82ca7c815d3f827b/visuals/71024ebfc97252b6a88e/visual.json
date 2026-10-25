@@ -1,0 +1,154 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "71024ebfc97252b6a88e",
+  "position": {
+    "x": 650,
+    "y": 196,
+    "z": 8000,
+    "width": 610,
+    "height": 250,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "season_label"
+                }
+              },
+              "queryRef": "Value vs Points.season_label",
+              "nativeQueryRef": "season_label",
+              "displayName": "Season"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "value_rank"
+                }
+              },
+              "queryRef": "Value vs Points.value_rank",
+              "nativeQueryRef": "value_rank",
+              "displayName": "Value rank"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "position"
+                }
+              },
+              "queryRef": "Value vs Points.position",
+              "nativeQueryRef": "position",
+              "displayName": "Finished"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "points"
+                }
+              },
+              "queryRef": "Value vs Points.points",
+              "nativeQueryRef": "points",
+              "displayName": "Points"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "expected_points"
+                }
+              },
+              "queryRef": "Value vs Points.expected_points",
+              "nativeQueryRef": "expected_points",
+              "displayName": "Expected"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "points_vs_expected"
+                }
+              },
+              "queryRef": "Value vs Points.points_vs_expected",
+              "nativeQueryRef": "points_vs_expected",
+              "displayName": "vs expected"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Value vs Points"
+                  }
+                },
+                "Property": "season_label"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Season by season: value rank vs finish'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -20,13 +20,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Transfer Balance"
+                      "Entity": "Club"
                     }
                   },
                   "Property": "club_name"
                 }
               },
-              "queryRef": "Transfer Balance.club_name",
+              "queryRef": "Club.club_name",
               "nativeQueryRef": "club_name",
               "displayName": "Club"
             }

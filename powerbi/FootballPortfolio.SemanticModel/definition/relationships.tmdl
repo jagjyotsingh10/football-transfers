@@ -61,3 +61,7 @@ relationship d4d3cf1d-d493-5fe8-9c24-2fea7c0d4e36
 relationship af48beee-abd3-5ac4-b5ba-dabe78fbec0e
 	fromColumn: 'Value vs Points'.club_id
 	toColumn: Club.club_id
+
+relationship e297d3a5-91b8-5a88-b07f-8bb2d17fc5d2
+	fromColumn: 'Portfolio Players'.club_id
+	toColumn: Club.club_id
