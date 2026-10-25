@@ -326,3 +326,94 @@ FROM rpt.vw_club_portfolio
 WHERE snapshot_year = 2026
 GROUP BY competition_id
 ORDER BY league_avg_value_m DESC;
+
+/* =====================================================================
+   Q11. Does portfolio value buy league points?
+   Value = the 25-player portfolio on 1 September (after the summer window),
+   points = on-pitch points from match results (no deductions).
+   ===================================================================== */
+
+-- 11a. League tables check: our on-pitch positions vs the source's official positions
+WITH flagged AS (
+    SELECT position, official_position,
+           COUNT(*) OVER (PARTITION BY competition_id, season_start_year, points) AS clubs_on_same_points
+    FROM rpt.vw_league_table
+)
+SELECT COUNT(*)                                                                                  AS club_seasons,
+       SUM(CASE WHEN position = official_position THEN 1 ELSE 0 END)                             AS same_position,
+       SUM(CASE WHEN position <> official_position AND clubs_on_same_points > 1 THEN 1 ELSE 0 END) AS differ_level_on_points,
+       SUM(CASE WHEN position <> official_position AND clubs_on_same_points = 1 THEN 1 ELSE 0 END) AS differ_other
+FROM flagged;
+
+-- 11b. How strongly does value predict results, by league?
+--      rank_correlation: value rank vs finishing position (1 = perfect)
+--      r_squared: share of variation in points per game explained by log relative value
+WITH r AS (
+    SELECT competition_id, competition_name,
+           CAST(value_rank AS FLOAT) AS vr, CAST(position AS FLOAT) AS pos,
+           LOG(CAST(value_index AS FLOAT)) AS x, CAST(points_per_game AS FLOAT) AS y
+    FROM rpt.vw_value_vs_points
+)
+SELECT competition_name, COUNT(*) AS club_seasons,
+       CAST((AVG(vr * pos) - AVG(vr) * AVG(pos)) / (STDEVP(vr) * STDEVP(pos)) AS DECIMAL(4,2))                AS rank_correlation,
+       CAST(POWER((AVG(x * y) - AVG(x) * AVG(y)) / (STDEVP(x) * STDEVP(y)), 2) AS DECIMAL(4,2))              AS r_squared
+FROM r
+GROUP BY competition_name
+UNION ALL
+SELECT 'All five leagues', COUNT(*),
+       CAST((AVG(vr * pos) - AVG(vr) * AVG(pos)) / (STDEVP(vr) * STDEVP(pos)) AS DECIMAL(4,2)),
+       CAST(POWER((AVG(x * y) - AVG(x) * AVG(y)) / (STDEVP(x) * STDEVP(y)), 2) AS DECIMAL(4,2))
+FROM r;
+
+-- 11c. What each value rank delivers on average
+SELECT CASE WHEN value_rank = 1 THEN '1. Most valuable'
+            WHEN value_rank <= 4 THEN '2. 2nd-4th'
+            WHEN value_rank <= 10 THEN '3. 5th-10th'
+            ELSE '4. 11th or lower' END                                         AS value_rank_band,
+       COUNT(*)                                                                AS club_seasons,
+       CAST(AVG(points_per_game) AS DECIMAL(4,2))                              AS avg_points_per_game,
+       CAST(AVG(1.0 * position) AS DECIMAL(4,1))                               AS avg_position,
+       CAST(100.0 * SUM(CASE WHEN position = 1 THEN 1 ELSE 0 END) / COUNT(*) AS DECIMAL(5,1)) AS pct_champions,
+       CAST(100.0 * SUM(CASE WHEN position <= 4 THEN 1 ELSE 0 END) / COUNT(*) AS DECIMAL(5,1)) AS pct_top4,
+       CAST(100.0 * SUM(CASE WHEN position > clubs_in_league - 3 THEN 1 ELSE 0 END) / COUNT(*) AS DECIMAL(5,1)) AS pct_bottom3
+FROM rpt.vw_value_vs_points
+GROUP BY CASE WHEN value_rank = 1 THEN '1. Most valuable'
+              WHEN value_rank <= 4 THEN '2. 2nd-4th'
+              WHEN value_rank <= 10 THEN '3. 5th-10th'
+              ELSE '4. 11th or lower' END
+ORDER BY value_rank_band;
+
+-- 11d. Champions that were not the most valuable squad
+SELECT season_label, competition_name, club_name AS champion, value_rank, value_index, points
+FROM rpt.vw_value_vs_points
+WHERE position = 1 AND value_rank > 1
+ORDER BY season_label, competition_name;
+
+-- 11e. Biggest single-season over- and underperformers vs expected points
+SELECT TOP 10 season_label, club_name, competition_id, value_rank, position, points, expected_points, points_vs_expected
+FROM rpt.vw_value_vs_points ORDER BY points_vs_expected DESC;
+SELECT TOP 10 season_label, club_name, competition_id, value_rank, position, points, expected_points, points_vs_expected
+FROM rpt.vw_value_vs_points ORDER BY points_vs_expected ASC;
+
+-- 11f. Consistent over- and underperformers: average points vs expected per season (4+ seasons)
+SELECT * FROM (
+    SELECT TOP 8 'Over' AS side, club_name, competition_id, COUNT(*) AS seasons,
+           CAST(AVG(points_vs_expected) AS DECIMAL(5,1)) AS avg_points_vs_expected,
+           CAST(AVG(1.0 * value_rank) AS DECIMAL(4,1))   AS avg_value_rank,
+           CAST(AVG(1.0 * position) AS DECIMAL(4,1))     AS avg_position
+    FROM rpt.vw_value_vs_points
+    GROUP BY club_id, club_name, competition_id
+    HAVING COUNT(*) >= 4
+    ORDER BY AVG(points_vs_expected) DESC
+) o
+UNION ALL
+SELECT * FROM (
+    SELECT TOP 8 'Under' AS side, club_name, competition_id, COUNT(*) AS seasons,
+           CAST(AVG(points_vs_expected) AS DECIMAL(5,1)) AS avg_points_vs_expected,
+           CAST(AVG(1.0 * value_rank) AS DECIMAL(4,1))   AS avg_value_rank,
+           CAST(AVG(1.0 * position) AS DECIMAL(4,1))     AS avg_position
+    FROM rpt.vw_value_vs_points
+    GROUP BY club_id, club_name, competition_id
+    HAVING COUNT(*) >= 4
+    ORDER BY AVG(points_vs_expected) ASC
+) u;

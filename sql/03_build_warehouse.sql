@@ -22,7 +22,10 @@
 USE FootballTransferROI;
 GO
 
-/* ---------- drop in dependency order (children first) ---------- */
+/* ---------- drop in dependency order (children first) ----------
+   Step 5's tables reference these, so they go first; re-run step 5 after this. */
+DROP TABLE IF EXISTS dw.fact_portfolio_snapshot;
+DROP TABLE IF EXISTS dw.dim_snapshot;
 DROP TABLE IF EXISTS dw.fact_appearance;
 DROP TABLE IF EXISTS dw.fact_transfer;
 DROP TABLE IF EXISTS dw.fact_player_valuation;
@@ -190,7 +193,9 @@ CREATE TABLE dw.fact_match (
     away_club_id       INT          NOT NULL CONSTRAINT FK_match_away_club   REFERENCES dw.dim_club (club_id),
     home_goals         TINYINT      NULL,  -- NULL = not played (postponed/abandoned)
     away_goals         TINYINT      NULL,
-    attendance         INT          NULL
+    attendance         INT          NULL,
+    home_position      TINYINT      NULL,  -- league position after this match, from the source
+    away_position      TINYINT      NULL   -- (official table, so it includes point deductions)
 );
 
 WITH g AS (
@@ -204,6 +209,8 @@ WITH g AS (
            TRY_CAST(TRY_CAST(g.home_club_goals AS FLOAT) AS TINYINT) AS home_goals,
            TRY_CAST(TRY_CAST(g.away_club_goals AS FLOAT) AS TINYINT) AS away_goals,
            TRY_CAST(TRY_CAST(g.attendance AS FLOAT) AS INT)   AS attendance,
+           TRY_CAST(TRY_CAST(g.home_club_position AS FLOAT) AS TINYINT) AS home_position,
+           TRY_CAST(TRY_CAST(g.away_club_position AS FLOAT) AS TINYINT) AS away_position,
            ROW_NUMBER() OVER (PARTITION BY TRY_CAST(g.game_id AS INT) ORDER BY (SELECT NULL)) AS rn
     FROM stg.games g
     JOIN dw.dim_competition c ON c.competition_id = g.competition_id
@@ -211,7 +218,8 @@ WITH g AS (
 )
 INSERT INTO dw.fact_match
 SELECT game_id, competition_id, season_start_year, matchday, match_date,
-       home_club_id, away_club_id, home_goals, away_goals, attendance
+       home_club_id, away_club_id, home_goals, away_goals, attendance,
+       home_position, away_position
 FROM g
 WHERE rn = 1
   AND game_id IS NOT NULL

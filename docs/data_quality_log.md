@@ -26,6 +26,8 @@ Results of `sql/04_data_quality_checks.sql`, with what each one means for the an
 | Thin squads after relegation | 10 portfolios in June 2025 and 3 in June 2026 have under 20 valued players (e.g. Montpellier, Las Palmas: 13) | Kept, flagged `is_thin_squad` so they can be filtered out |
 | Tiny bases distort growth rates | Como's June 2020 portfolio (Serie C) is under €1m, giving +210%/yr | Growth since 2020 is only calculated for clubs in the top 5 in 2020/21 |
 | % changes explode for cheap players | A €0.2m player revalued at €5m is +2,400%; plain % volatility put Wolves at 349% | Volatility uses log changes |
+| League tables vs official positions (Q11) | 541 of 582 club-seasons match the source's final position. 34 differences are clubs level on points; 7 are clubs moved by deductions (Juventus -10 in 2022/23, Everton -8 in 2023/24, Nice in 2021/22). All 30 champions match | Kept on-pitch points: deductions say nothing about squad quality. LaLiga and Serie A break ties on head-to-head, which the on-pitch table doesn't model |
+| Postponed games carry the wrong final position | Atalanta's last game by date in 2023/24 was a postponed round-29 match, so it showed 6th, not the 4th they finished | The official position is taken from each club's final-round match, not its latest-dated one |
 | Identical Q8 price-band counts | 1,505 deals above 110% of value and 1,505 below 90% | Recounted independently: genuine. 224 deals were priced exactly at market value |
 
 ## Known limitations

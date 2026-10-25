@@ -3,7 +3,7 @@
 Top 5 European leagues, 30 June 2020 to 30 June 2026. Source queries: `sql/06_portfolio_questions.sql`.
 Data: Transfermarkt via Kaggle, downloaded 2026-10-25. Market values are Transfermarkt estimates, not audited accounts.
 
-**How a portfolio is defined.** At each 30 June, a club's portfolio is its 25 most valuable players, valued at their latest
+**How a portfolio is defined.** At each 30 June (and each 1 September, for Q11), a club's portfolio is its 25 most valuable players, valued at their latest
 Transfermarkt valuation in the previous 12 months. A player's club is whichever came last: his latest transfer or his latest
 valuation. The 25-player cut keeps squads comparable across years: the source stopped valuing most reserve and youth players
 in 2024, and the top 25 hold 96-98% of squad value in every year. "Latest" means 30 June 2026, the end of 2025/26.
@@ -128,6 +128,34 @@ in 2024, and the top 25 hold 96-98% of squad value in every year. "Latest" means
 - Against their own league average (100 = average): PSG 541, Real Madrid 449, Barcelona 412, Bayern 344, Inter 266. Manchester City is only 211 because the Premier League average is so high (€25.5m, against €10.3m to €11.2m elsewhere).
 - Against the whole top 5, PSG is at 401 and Manchester City at 387.
 
+## Q11. Does portfolio value buy league points?
+
+**Yes, largely. Portfolio value at the start of a season explains 60% of the variation in points per game, and the most valuable squad won the league in 19 of 30 league-seasons.**
+
+| League | Rank correlation (value rank vs finish) | Variation in points explained (R²) |
+|---|---|---|
+| Serie A | 0.86 | 72% |
+| Ligue 1 | 0.78 | 61% |
+| LaLiga | 0.76 | 67% |
+| Premier League | 0.72 | 58% |
+| Bundesliga | 0.66 | 52% |
+| All five | 0.76 | 60% |
+
+| Value rank at season start | Avg points per game | Avg finish | Champions | Top 4 | Bottom 3 |
+|---|---|---|---|---|---|
+| Most valuable | 2.21 | 1.8 | 63.3% | 96.7% | 0% |
+| 2nd-4th | 1.89 | 4.1 | 12.2% | 67.8% | 0% |
+| 5th-10th | 1.44 | 8.9 | 0% | 13.8% | 3.9% |
+| 11th or lower | 1.07 | 13.9 | 0% | 1.8% | 29.5% |
+
+- **No club outside its league's 4 most valuable squads won a title.** The 11 champions that weren't the most valuable include Liverpool 2024/25 (4th most valuable), Napoli 2022/23 and 2024/25 (4th), Leverkusen 2023/24 (3rd) and Lille 2020/21 (4th).
+- **Biggest single-season overperformers** (points above what their value predicts): Girona 2023/24 +30.7 (11th most valuable, finished 3rd), Lens 2022/23 +30.1 (8th, finished 2nd), Stuttgart 2023/24 +29.8 (11th, finished 2nd), Leverkusen 2023/24 +29.5 (champions unbeaten).
+- **Biggest underperformers:** Schalke 2020/21 -32.5 (9th most valuable, relegated with 16 points), Chelsea 2022/23 -24.9 (3rd most valuable, finished 12th), Tottenham 2024/25 -24.8 and 2025/26 -24.1 (finished 17th both times).
+- **Consistent overperformers** (average per season): Lens +14.9, Manchester City +9.9, Bayern +9.6, Inter +9.1, Arsenal +8.8. **Consistent underperformers:** Southampton -12.2, Valencia -10.1, Leicester -9.7, Tottenham -9.1, Chelsea -8.2.
+- The elite clubs beating the line every year suggests value pays off more than proportionally at the very top: the fitted line (log of relative value) understates how dominant the richest squads are.
+- How it's measured: value is the 25-player portfolio on 1 September, after the summer window, so points are compared with value the club had going in, not value it earned by winning. Points are on-pitch points from match results. Expected points come from a line fitted within each league across all six seasons: points per game against the log of the club's value relative to that season's league average.
+- League tables were checked against the source's official final positions: 541 of 582 club-seasons match. 34 of the 41 differences are clubs level on points (LaLiga and Serie A break ties on head-to-head), and the rest come from point deductions (Juventus -10 in 2022/23, Everton -8 in 2023/24, Nice in 2021/22) moving the clubs around them.
+
 ---
 
 ## Limitations
@@ -135,4 +163,5 @@ in 2024, and the top 25 hold 96-98% of squad value in every year. "Latest" means
 - Loanees count for the club they play for: the source can't tell a loan from a free transfer.
 - The source stopped valuing most reserve and youth players in 2024. The 25-player portfolio handles this, but 10 clubs in June 2025 and 3 in June 2026 have fewer than 20 valued players (`is_thin_squad`), mostly clubs just relegated.
 - Growth since 2020 for promoted clubs starts from a squad valued in a lower league.
+- Q11 uses a 1 September squad; in 2020 the summer window ran to 5 October, so a few late 2020 signings are missed. Points ignore deductions.
 - Wages are not in the dataset, so this is asset value, not total squad cost.

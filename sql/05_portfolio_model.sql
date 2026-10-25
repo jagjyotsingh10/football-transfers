@@ -36,11 +36,16 @@ DROP TABLE IF EXISTS dw.fact_portfolio_snapshot;
 DROP TABLE IF EXISTS dw.dim_snapshot;
 GO
 
-/* ---------- dim_snapshot: one row per 30 June ---------- */
+/* ---------- dim_snapshot: each 30 June (season end), plus each 1 September (season start) ----------
+   Season-end snapshots drive Q1-Q10. Season-start snapshots (squad after the
+   summer window, valued before a ball is kicked) drive Q11, so points are
+   compared with value the club had going in, not value earned by winning. */
 CREATE TABLE dw.dim_snapshot (
-    snapshot_date        DATE     NOT NULL CONSTRAINT PK_dim_snapshot PRIMARY KEY,
-    snapshot_year        SMALLINT NOT NULL,
-    closes_season_label  CHAR(7)  NOT NULL   -- 30 Jun 2021 closes 2020/21
+    snapshot_date      DATE        NOT NULL CONSTRAINT PK_dim_snapshot PRIMARY KEY,
+    snapshot_year      SMALLINT    NOT NULL,
+    snapshot_type      VARCHAR(12) NOT NULL CONSTRAINT CK_snapshot_type CHECK (snapshot_type IN ('Season end', 'Season start')),
+    season_start_year  SMALLINT    NOT NULL,  -- season it closes (end) or opens (start)
+    season_label       CHAR(7)     NOT NULL
 );
 
 WITH years AS (
@@ -48,9 +53,13 @@ WITH years AS (
     UNION ALL
     SELECT CAST(y + 1 AS SMALLINT) FROM years WHERE y < 2026
 )
-INSERT INTO dw.dim_snapshot (snapshot_date, snapshot_year, closes_season_label)
-SELECT DATEFROMPARTS(y, 6, 30), y, CONCAT(y - 1, '/', RIGHT(CAST(y AS VARCHAR(4)), 2))
-FROM years;
+INSERT INTO dw.dim_snapshot (snapshot_date, snapshot_year, snapshot_type, season_start_year, season_label)
+SELECT DATEFROMPARTS(y, 6, 30), y, 'Season end', y - 1, CONCAT(y - 1, '/', RIGHT(CAST(y AS VARCHAR(4)), 2))
+FROM years
+UNION ALL
+SELECT DATEFROMPARTS(y, 9, 1), y, 'Season start', y, CONCAT(y, '/', RIGHT(CAST(y + 1 AS VARCHAR(4)), 2))
+FROM years
+WHERE y <= 2025;
 GO
 
 /* ---------- fact_portfolio_snapshot: one row per player per snapshot ---------- */
@@ -136,12 +145,13 @@ GO
    30 Jun 2021-2026: clubs that played the season it closes.
    30 Jun 2020 (opening): clubs that played 2020/21, as their starting point. */
 CREATE OR ALTER VIEW rpt.vw_snapshot_scope AS
-SELECT s.snapshot_date, s.snapshot_year, s.closes_season_label,
+SELECT s.snapshot_date, s.snapshot_year, s.season_label AS closes_season_label,
        cs.club_id, cs.competition_id, cs.season_start_year,
        CAST(CASE WHEN s.snapshot_year = 2020 THEN 1 ELSE 0 END AS BIT) AS is_opening
 FROM dw.dim_snapshot s
 JOIN rpt.vw_club_season cs
-  ON cs.season_start_year = CASE WHEN s.snapshot_year = 2020 THEN 2020 ELSE s.snapshot_year - 1 END;
+  ON cs.season_start_year = CASE WHEN s.snapshot_year = 2020 THEN 2020 ELSE s.snapshot_year - 1 END
+WHERE s.snapshot_type = 'Season end';
 GO
 
 /* ---------- Q1, Q2, Q4, Q6, Q10: one row per club per snapshot ---------- */
@@ -160,6 +170,7 @@ WITH totals AS (
                     THEN value_year_before_eur - market_value_eur END)                         AS value_lost_eur,
            SUM(CASE WHEN market_value_eur < value_year_before_eur THEN 1 ELSE 0 END)           AS declining_players
     FROM rpt.vw_portfolio_player
+    WHERE snapshot_date IN (SELECT snapshot_date FROM dw.dim_snapshot WHERE snapshot_type = 'Season end')
     GROUP BY club_id, snapshot_date
 ),
 with_prev AS (
@@ -294,6 +305,7 @@ JOIN changes c
   ON c.valuation_date <= s.snapshot_date
  AND c.valuation_date >  DATEADD(YEAR, -3, s.snapshot_date)
 WHERE c.log_change IS NOT NULL
+  AND s.snapshot_type = 'Season end'
 GROUP BY s.snapshot_date, c.player_id
 HAVING COUNT(*) >= 3;
 GO
@@ -421,8 +433,99 @@ CREATE OR ALTER VIEW rpt.vw_dim_competition AS
 SELECT competition_id, competition_name, country_name FROM dw.dim_competition;
 GO
 CREATE OR ALTER VIEW rpt.vw_dim_snapshot AS
-SELECT snapshot_date, snapshot_year, closes_season_label FROM dw.dim_snapshot;
+SELECT snapshot_date, snapshot_year, snapshot_type, season_start_year, season_label FROM dw.dim_snapshot;
 GO
+
+/* ---------- Q11: league table, built from raw scores ----------
+   position = on-pitch table (points, then goal difference, then goals scored).
+   official_position = the source's position after the club's final-round
+   match, which includes point deductions and each league's own tie-breakers.
+   Final round, not latest date: a postponed game played late (Atalanta's
+   round 29 in June 2024) carries the position from its own round. */
+CREATE OR ALTER VIEW rpt.vw_league_table AS
+WITH totals AS (
+    SELECT m.competition_id, m.season_start_year, cm.club_id,
+           COUNT(*)                                          AS played,
+           SUM(CASE WHEN cm.result = 'W' THEN 1 ELSE 0 END)  AS won,
+           SUM(CASE WHEN cm.result = 'D' THEN 1 ELSE 0 END)  AS drawn,
+           SUM(CASE WHEN cm.result = 'L' THEN 1 ELSE 0 END)  AS lost,
+           SUM(cm.goals_for)                                 AS goals_for,
+           SUM(cm.goals_against)                             AS goals_against,
+           SUM(cm.points)                                    AS points
+    FROM dw.fact_club_match cm
+    JOIN dw.fact_match m ON m.game_id = cm.game_id
+    GROUP BY m.competition_id, m.season_start_year, cm.club_id
+),
+last_match AS (
+    SELECT m.competition_id, m.season_start_year, cm.club_id,
+           CASE WHEN cm.is_home = 1 THEN m.home_position ELSE m.away_position END AS official_position,
+           ROW_NUMBER() OVER (PARTITION BY m.competition_id, m.season_start_year, cm.club_id
+                              ORDER BY TRY_CAST(LEFT(m.matchday, CHARINDEX('.', m.matchday + '.') - 1) AS INT) DESC,
+                                       m.match_date DESC) AS rn   -- matchday is '38. Matchday'
+    FROM dw.fact_club_match cm
+    JOIN dw.fact_match m ON m.game_id = cm.game_id
+)
+SELECT t.competition_id, comp.competition_name, t.season_start_year, se.season_label,
+       t.club_id, c.club_name,
+       t.played, t.won, t.drawn, t.lost, t.goals_for, t.goals_against,
+       t.goals_for - t.goals_against                                         AS goal_difference,
+       t.points,
+       CAST(1.0 * t.points / t.played AS DECIMAL(4,2))                       AS points_per_game,
+       RANK() OVER (PARTITION BY t.competition_id, t.season_start_year
+                    ORDER BY t.points DESC, t.goals_for - t.goals_against DESC, t.goals_for DESC) AS position,
+       lm.official_position,
+       COUNT(*) OVER (PARTITION BY t.competition_id, t.season_start_year)    AS clubs_in_league
+FROM totals t
+JOIN dw.dim_club c            ON c.club_id = t.club_id
+JOIN dw.dim_competition comp  ON comp.competition_id = t.competition_id
+JOIN dw.dim_season se         ON se.season_start_year = t.season_start_year
+LEFT JOIN last_match lm       ON lm.competition_id = t.competition_id AND lm.season_start_year = t.season_start_year
+                             AND lm.club_id = t.club_id AND lm.rn = 1;
+GO
+
+/* ---------- Q11: season-start portfolio value vs points ----------
+   Expected points come from a line fitted within each league across all six
+   seasons: points per game against the log of the club's value relative to
+   the league average that season. points_vs_expected > 0 = more points
+   than the squad's value predicts. */
+CREATE OR ALTER VIEW rpt.vw_value_vs_points AS
+WITH start_value AS (
+    SELECT ps.club_id, ds.season_start_year, SUM(ps.market_value_eur) AS value_eur, COUNT(*) AS squad_size
+    FROM rpt.vw_portfolio_player ps
+    JOIN dw.dim_snapshot ds ON ds.snapshot_date = ps.snapshot_date AND ds.snapshot_type = 'Season start'
+    GROUP BY ps.club_id, ds.season_start_year
+),
+joined AS (
+    SELECT lt.*, sv.value_eur AS season_start_value_eur, sv.squad_size,
+           sv.value_eur / AVG(sv.value_eur) OVER (PARTITION BY lt.competition_id, lt.season_start_year) AS value_index,
+           RANK() OVER (PARTITION BY lt.competition_id, lt.season_start_year ORDER BY sv.value_eur DESC) AS value_rank
+    FROM rpt.vw_league_table lt
+    JOIN start_value sv ON sv.club_id = lt.club_id AND sv.season_start_year = lt.season_start_year
+),
+xy AS (
+    SELECT j.*, LOG(j.value_index) AS x, 1.0 * j.points / j.played AS y
+    FROM joined j
+),
+fit AS (
+    SELECT xy.*,
+           (AVG(x * y) OVER (PARTITION BY competition_id) - AVG(x) OVER (PARTITION BY competition_id) * AVG(y) OVER (PARTITION BY competition_id))
+             / NULLIF(VARP(x) OVER (PARTITION BY competition_id), 0) AS slope,
+           AVG(x) OVER (PARTITION BY competition_id) AS mean_x,
+           AVG(y) OVER (PARTITION BY competition_id) AS mean_y
+    FROM xy
+)
+SELECT competition_id, competition_name, season_start_year, season_label, club_id, club_name,
+       played, points, points_per_game, position, official_position, clubs_in_league,
+       season_start_value_eur, squad_size, value_rank,
+       CAST(value_index AS DECIMAL(6,2))                                        AS value_index,  -- 1 = league average
+       CAST((mean_y + slope * (x - mean_x)) * played AS DECIMAL(5,1))           AS expected_points,
+       CAST(points - (mean_y + slope * (x - mean_x)) * played AS DECIMAL(5,1))  AS points_vs_expected,
+       value_rank - position                                                    AS places_above_value_rank
+FROM fit;
+GO
+
+/* ---------- summary: season-start portfolios matched to league tables (expect 588) ---------- */
+SELECT COUNT(*) AS club_seasons_with_value_and_points FROM rpt.vw_value_vs_points;
 
 /* ---------- summary: reported portfolios per snapshot ---------- */
 SELECT snapshot_date, COUNT(*) AS clubs, AVG(squad_size) AS avg_squad,
