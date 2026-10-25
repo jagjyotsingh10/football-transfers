@@ -1,0 +1,205 @@
+table Signings
+	lineageTag: 72bd7213-9459-5b5b-8e6b-fbbe3cc3a7d7
+
+	measure 'Paid Signings' = COUNTROWS(Signings)
+		formatString: #,0
+		lineageTag: d25d786b-c718-5653-850f-c87de75d069f
+
+	measure 'Median Appreciation' = MEDIAN(Signings[appreciation_pct]) / 100
+		formatString: 0.0%
+		lineageTag: aa04b6d2-20c5-5b26-8427-2154329767da
+
+	measure 'Share Gaining Value' = DIVIDE(CALCULATE(COUNTROWS(Signings), Signings[appreciation_eur] > 0), CALCULATE(COUNTROWS(Signings), NOT ISBLANK(Signings[appreciation_eur])))
+		formatString: 0.0%
+		lineageTag: 0fae52ff-55ba-5f93-84ac-cbc954f54187
+
+	column transfer_key
+		dataType: int64
+		lineageTag: 5189d8ad-e3b7-5768-aea1-db64e91c1b5c
+		summarizeBy: none
+		sourceColumn: transfer_key
+
+		annotation SummarizationSetBy = User
+
+	column transfer_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 382361f2-0643-54ce-a28a-d4b6acf6ab1d
+		summarizeBy: none
+		sourceColumn: transfer_date
+
+		annotation SummarizationSetBy = User
+
+	column season_label
+		dataType: string
+		lineageTag: 7bc2a5b3-6098-5b10-bdf2-a8eeac67f948
+		summarizeBy: none
+		sourceColumn: season_label
+
+		annotation SummarizationSetBy = User
+
+	column competition_id
+		dataType: string
+		isHidden
+		lineageTag: 60700cde-102c-57f1-9a5e-7bc091e3ff30
+		summarizeBy: none
+		sourceColumn: competition_id
+
+		annotation SummarizationSetBy = User
+
+	column club_id
+		dataType: int64
+		isHidden
+		lineageTag: 6c3053be-5cdf-543e-83db-3a09abfbf8db
+		summarizeBy: none
+		sourceColumn: club_id
+
+		annotation SummarizationSetBy = User
+
+	column club_name
+		dataType: string
+		lineageTag: 742b076e-9c4d-5c6c-8fc6-33a90563db27
+		summarizeBy: none
+		sourceColumn: club_name
+
+		annotation SummarizationSetBy = User
+
+	column from_club_name
+		dataType: string
+		lineageTag: 97d4a2ef-d888-52cc-b0d3-d181c74ed41c
+		summarizeBy: none
+		sourceColumn: from_club_name
+
+		annotation SummarizationSetBy = User
+
+	column player_id
+		dataType: int64
+		isHidden
+		lineageTag: 5808ba8e-6c14-509f-9594-b0266b211815
+		summarizeBy: none
+		sourceColumn: player_id
+
+		annotation SummarizationSetBy = User
+
+	column player_name
+		dataType: string
+		lineageTag: 2e994730-6508-5ec2-8def-b19272ad594d
+		summarizeBy: none
+		sourceColumn: player_name
+
+		annotation SummarizationSetBy = User
+
+	column position
+		dataType: string
+		lineageTag: a614929a-2e6f-51c1-aeaf-584378130fec
+		summarizeBy: none
+		sourceColumn: position
+
+		annotation SummarizationSetBy = User
+
+	column age_at_transfer
+		dataType: double
+		lineageTag: b70a8c32-ff15-57e5-8ac4-a01e6035e6a0
+		summarizeBy: none
+		sourceColumn: age_at_transfer
+
+		annotation SummarizationSetBy = User
+
+	column fee_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: e53b534f-1ce1-5db4-b122-9c9be5f5721d
+		summarizeBy: none
+		sourceColumn: fee_eur
+
+		annotation SummarizationSetBy = User
+
+	column value_at_transfer_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: e487cc25-2391-5093-adf3-0f19bcede9df
+		summarizeBy: none
+		sourceColumn: value_at_transfer_eur
+
+		annotation SummarizationSetBy = User
+
+	column latest_value_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: 1e72bd75-6e1d-51b0-8349-04f883addcc3
+		summarizeBy: none
+		sourceColumn: latest_value_eur
+
+		annotation SummarizationSetBy = User
+
+	column latest_value_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 24e5c5f3-23c8-56f8-91aa-b42c03a71184
+		summarizeBy: none
+		sourceColumn: latest_value_date
+
+		annotation SummarizationSetBy = User
+
+	column next_move_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: adbdca11-8eb1-5d1d-9f9f-b5cfd91b0a12
+		summarizeBy: none
+		sourceColumn: next_move_date
+
+		annotation SummarizationSetBy = User
+
+	column still_at_club
+		dataType: boolean
+		lineageTag: e1f0785e-c247-5082-b178-5ab71ab701a3
+		summarizeBy: none
+		sourceColumn: still_at_club
+
+		annotation SummarizationSetBy = User
+
+	column appreciation_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: 89b92777-eab9-544e-a879-a7764bbc3c6b
+		summarizeBy: none
+		sourceColumn: appreciation_eur
+
+		annotation SummarizationSetBy = User
+
+	column appreciation_pct
+		dataType: double
+		formatString: 0.0\%
+		lineageTag: f5c4ef9e-3a4d-5be6-bac2-87d34c8bb819
+		summarizeBy: none
+		sourceColumn: appreciation_pct
+
+		annotation SummarizationSetBy = User
+
+	column value_vs_fee_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: 69746209-797c-51af-92df-d94dc00d21f1
+		summarizeBy: none
+		sourceColumn: value_vs_fee_eur
+
+		annotation SummarizationSetBy = User
+
+	column years_measured
+		dataType: double
+		lineageTag: f74250fd-e855-55fb-b296-50a8a958b051
+		summarizeBy: none
+		sourceColumn: years_measured
+
+		annotation SummarizationSetBy = User
+
+	partition Signings = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    Data = Source{[Schema = "rpt", Item = "vw_signing_appreciation"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

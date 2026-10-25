@@ -1,0 +1,38 @@
+table League
+	lineageTag: 3d0a0768-baf2-5856-9fa9-7db18cbc4faa
+
+	column competition_id
+		dataType: string
+		isHidden
+		lineageTag: c6be739c-fc2f-51a2-b731-d4513a45146d
+		summarizeBy: none
+		sourceColumn: competition_id
+
+		annotation SummarizationSetBy = User
+
+	column competition_name
+		dataType: string
+		lineageTag: 676fc5f3-b777-5562-ad5a-ed5305d64230
+		summarizeBy: none
+		sourceColumn: competition_name
+
+		annotation SummarizationSetBy = User
+
+	column country_name
+		dataType: string
+		lineageTag: 32f12b28-7110-5e7e-82a2-09c923d5833e
+		summarizeBy: none
+		sourceColumn: country_name
+
+		annotation SummarizationSetBy = User
+
+	partition League = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    Data = Source{[Schema = "rpt", Item = "vw_dim_competition"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

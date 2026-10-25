@@ -1,0 +1,55 @@
+table Club
+	lineageTag: 529cc8a4-7e9f-5b8a-a304-9f4ddb58bd49
+
+	column club_id
+		dataType: int64
+		isHidden
+		lineageTag: cb146913-895e-5c99-acbd-861880818796
+		summarizeBy: none
+		sourceColumn: club_id
+
+		annotation SummarizationSetBy = User
+
+	column club_name
+		dataType: string
+		lineageTag: c3f83acd-3872-5e21-814a-589a6228808d
+		summarizeBy: none
+		sourceColumn: club_name
+
+		annotation SummarizationSetBy = User
+
+	column current_competition_id
+		dataType: string
+		isHidden
+		lineageTag: 862a9897-c8cb-5d1c-ab24-40807b3ee3ec
+		summarizeBy: none
+		sourceColumn: current_competition_id
+
+		annotation SummarizationSetBy = User
+
+	column stadium_name
+		dataType: string
+		lineageTag: 3ddd49b5-c964-51a2-a520-9fb4c76dc6f0
+		summarizeBy: none
+		sourceColumn: stadium_name
+
+		annotation SummarizationSetBy = User
+
+	column stadium_seats
+		dataType: int64
+		lineageTag: 001b1b18-48c2-588a-a336-4d2981bdba6b
+		summarizeBy: none
+		sourceColumn: stadium_seats
+
+		annotation SummarizationSetBy = User
+
+	partition Club = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    Data = Source{[Schema = "rpt", Item = "vw_dim_club"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

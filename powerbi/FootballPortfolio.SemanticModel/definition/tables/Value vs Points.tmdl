@@ -1,0 +1,192 @@
+table 'Value vs Points'
+	lineageTag: b4df2bf4-63ef-5011-9d78-63670f1a32e3
+
+	measure 'Avg Points per Game' = AVERAGE('Value vs Points'[points_per_game])
+		formatString: 0.00
+		lineageTag: ba68dd6a-fedd-50f7-b55e-c389b0472226
+
+	measure 'Avg Value Index' = AVERAGE('Value vs Points'[value_index])
+		formatString: 0.00
+		lineageTag: 33585c0c-696e-5300-9d20-30045b72f755
+
+	measure 'Title Rate (most valuable squad)' = DIVIDE(CALCULATE(COUNTROWS('Value vs Points'), 'Value vs Points'[value_rank] = 1, 'Value vs Points'[position] = 1), CALCULATE(COUNTROWS('Value vs Points'), 'Value vs Points'[value_rank] = 1))
+		formatString: 0.0%
+		lineageTag: 6e4404d1-2deb-58c7-91dc-f20b6ca34fa5
+
+	measure 'Top-4 Rate (most valuable squad)' = DIVIDE(CALCULATE(COUNTROWS('Value vs Points'), 'Value vs Points'[value_rank] = 1, 'Value vs Points'[position] <= 4), CALCULATE(COUNTROWS('Value vs Points'), 'Value vs Points'[value_rank] = 1))
+		formatString: 0.0%
+		lineageTag: a8e2fa2d-c4a6-5adf-812f-fa8037e4c5ef
+
+	column competition_id
+		dataType: string
+		isHidden
+		lineageTag: acdd22fc-3449-57fd-b252-98b006f398d3
+		summarizeBy: none
+		sourceColumn: competition_id
+
+		annotation SummarizationSetBy = User
+
+	column competition_name
+		dataType: string
+		lineageTag: c2778639-f3b0-5404-8bf5-3b6f917a958d
+		summarizeBy: none
+		sourceColumn: competition_name
+
+		annotation SummarizationSetBy = User
+
+	column season_start_year
+		dataType: int64
+		lineageTag: d17ed8c5-3aa7-5a9f-ad3e-1f526e206228
+		summarizeBy: none
+		sourceColumn: season_start_year
+
+		annotation SummarizationSetBy = User
+
+	column season_label
+		dataType: string
+		lineageTag: b8155779-d0c6-5674-8242-b88a6d3f9b12
+		summarizeBy: none
+		sourceColumn: season_label
+
+		annotation SummarizationSetBy = User
+
+	column club_id
+		dataType: int64
+		isHidden
+		lineageTag: dbe9f360-39cc-56bc-833a-147dbb5d3d5f
+		summarizeBy: none
+		sourceColumn: club_id
+
+		annotation SummarizationSetBy = User
+
+	column club_name
+		dataType: string
+		lineageTag: ba3ef96a-6ee8-536f-be24-fe5aaa2298d4
+		summarizeBy: none
+		sourceColumn: club_name
+
+		annotation SummarizationSetBy = User
+
+	column club_season
+		dataType: string
+		lineageTag: 938dc728-38e2-55ed-aafb-eb15fd905fc3
+		summarizeBy: none
+		sourceColumn: club_season
+
+		annotation SummarizationSetBy = User
+
+	column played
+		dataType: int64
+		lineageTag: 75dceeba-b825-5662-99bd-728db756f3d2
+		summarizeBy: none
+		sourceColumn: played
+
+		annotation SummarizationSetBy = User
+
+	column points
+		dataType: int64
+		lineageTag: 85aafe05-b422-5733-8a6e-2572b3bc4919
+		summarizeBy: none
+		sourceColumn: points
+
+		annotation SummarizationSetBy = User
+
+	column points_per_game
+		dataType: double
+		lineageTag: 43fc3469-2d60-53c9-ad4b-8bfab5be0846
+		summarizeBy: none
+		sourceColumn: points_per_game
+
+		annotation SummarizationSetBy = User
+
+	column position
+		dataType: int64
+		lineageTag: cb6fc07e-0a9d-57e5-b06f-91f9482af270
+		summarizeBy: none
+		sourceColumn: position
+
+		annotation SummarizationSetBy = User
+
+	column official_position
+		dataType: int64
+		lineageTag: cc703556-b0dc-5484-8d37-8545b44153ca
+		summarizeBy: none
+		sourceColumn: official_position
+
+		annotation SummarizationSetBy = User
+
+	column clubs_in_league
+		dataType: int64
+		lineageTag: 7faebd4a-0306-59b9-93d2-4802d2a420a2
+		summarizeBy: none
+		sourceColumn: clubs_in_league
+
+		annotation SummarizationSetBy = User
+
+	column season_start_value_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: 051f0ddd-eb4e-5d08-9629-42d55892b0b6
+		summarizeBy: none
+		sourceColumn: season_start_value_eur
+
+		annotation SummarizationSetBy = User
+
+	column squad_size
+		dataType: int64
+		lineageTag: c04ddb3b-716b-524a-a2bf-73d8674b616b
+		summarizeBy: none
+		sourceColumn: squad_size
+
+		annotation SummarizationSetBy = User
+
+	column value_rank
+		dataType: int64
+		lineageTag: 424999f8-c9d4-5f77-913c-33682d56985b
+		summarizeBy: none
+		sourceColumn: value_rank
+
+		annotation SummarizationSetBy = User
+
+	column value_index
+		dataType: double
+		lineageTag: d0030ac4-a828-5be2-9790-d28144cb1b91
+		summarizeBy: none
+		sourceColumn: value_index
+
+		annotation SummarizationSetBy = User
+
+	column expected_points
+		dataType: double
+		lineageTag: 8ef03b94-cd30-5e21-97e1-04303d5b24ab
+		summarizeBy: none
+		sourceColumn: expected_points
+
+		annotation SummarizationSetBy = User
+
+	column points_vs_expected
+		dataType: double
+		lineageTag: cdc9cd2d-0c9e-55cf-9a9d-4b11daf94d08
+		summarizeBy: none
+		sourceColumn: points_vs_expected
+
+		annotation SummarizationSetBy = User
+
+	column places_above_value_rank
+		dataType: int64
+		lineageTag: aa6c8cb2-5239-51b4-bb1d-8ab2ab3f27ec
+		summarizeBy: none
+		sourceColumn: places_above_value_rank
+
+		annotation SummarizationSetBy = User
+
+	partition 'Value vs Points' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    Data = Source{[Schema = "rpt", Item = "vw_value_vs_points"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

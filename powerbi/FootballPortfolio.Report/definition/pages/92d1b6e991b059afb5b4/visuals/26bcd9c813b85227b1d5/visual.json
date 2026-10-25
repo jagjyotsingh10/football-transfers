@@ -1,0 +1,214 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "26bcd9c813b85227b1d5",
+  "position": {
+    "x": 20,
+    "y": 84,
+    "z": 2000,
+    "width": 1240,
+    "height": 316,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club KPIs"
+                    }
+                  },
+                  "Property": "club_name"
+                }
+              },
+              "queryRef": "Club KPIs.club_name",
+              "nativeQueryRef": "club_name",
+              "displayName": "Club"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club KPIs"
+                    }
+                  },
+                  "Property": "competition_name"
+                }
+              },
+              "queryRef": "Club KPIs.competition_name",
+              "nativeQueryRef": "competition_name",
+              "displayName": "League"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club KPIs"
+                    }
+                  },
+                  "Property": "total_value_eur"
+                }
+              },
+              "queryRef": "Club KPIs.total_value_eur",
+              "nativeQueryRef": "total_value_eur",
+              "displayName": "Value"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club KPIs"
+                    }
+                  },
+                  "Property": "value_rank_in_league"
+                }
+              },
+              "queryRef": "Club KPIs.value_rank_in_league",
+              "nativeQueryRef": "value_rank_in_league",
+              "displayName": "Rank in league"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club KPIs"
+                    }
+                  },
+                  "Property": "cagr_2020_2026_pct"
+                }
+              },
+              "queryRef": "Club KPIs.cagr_2020_2026_pct",
+              "nativeQueryRef": "cagr_2020_2026_pct",
+              "displayName": "Growth per year since 2020"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club KPIs"
+                    }
+                  },
+                  "Property": "growth_last_year_pct"
+                }
+              },
+              "queryRef": "Club KPIs.growth_last_year_pct",
+              "nativeQueryRef": "growth_last_year_pct",
+              "displayName": "Growth last year"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club KPIs"
+                    }
+                  },
+                  "Property": "top5_share_pct"
+                }
+              },
+              "queryRef": "Club KPIs.top5_share_pct",
+              "nativeQueryRef": "top5_share_pct",
+              "displayName": "Top-5 share"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club KPIs"
+                    }
+                  },
+                  "Property": "value_weighted_age"
+                }
+              },
+              "queryRef": "Club KPIs.value_weighted_age",
+              "nativeQueryRef": "value_weighted_age",
+              "displayName": "Value-weighted age"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club KPIs"
+                    }
+                  },
+                  "Property": "avg_value_eur"
+                }
+              },
+              "queryRef": "Club KPIs.avg_value_eur",
+              "nativeQueryRef": "avg_value_eur",
+              "displayName": "Avg value per player"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club KPIs"
+                    }
+                  },
+                  "Property": "avg_value_index_league"
+                }
+              },
+              "queryRef": "Club KPIs.avg_value_index_league",
+              "nativeQueryRef": "avg_value_index_league",
+              "displayName": "Avg value vs league (100 = avg)"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Club KPIs"
+                  }
+                },
+                "Property": "total_value_eur"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Club benchmark (Q5)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

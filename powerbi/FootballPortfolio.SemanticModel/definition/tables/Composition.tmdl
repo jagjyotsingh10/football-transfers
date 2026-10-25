@@ -1,0 +1,102 @@
+table Composition
+	lineageTag: 81724422-ea94-52d8-8328-2a50ed05a5ec
+
+	measure 'Age Band Value' = CALCULATE(SUM(Composition[value_eur]), Composition[dimension] = "Age band")
+		formatString: €#,0,,\m
+		lineageTag: 393714b0-d9e7-5255-a3b0-b599e8e9e777
+
+	column snapshot_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 877d8708-4850-5b79-864c-206dfef933fd
+		summarizeBy: none
+		sourceColumn: snapshot_date
+
+		annotation SummarizationSetBy = User
+
+	column closes_season_label
+		dataType: string
+		lineageTag: 32336fe3-fb64-5fb2-8b2e-1d39f4234082
+		summarizeBy: none
+		sourceColumn: closes_season_label
+
+		annotation SummarizationSetBy = User
+
+	column competition_id
+		dataType: string
+		isHidden
+		lineageTag: 92ad0586-d392-517c-881e-af3efad7e8e0
+		summarizeBy: none
+		sourceColumn: competition_id
+
+		annotation SummarizationSetBy = User
+
+	column club_id
+		dataType: int64
+		isHidden
+		lineageTag: e9e64084-2fdb-5477-b2cb-4a6dc7b7e9ef
+		summarizeBy: none
+		sourceColumn: club_id
+
+		annotation SummarizationSetBy = User
+
+	column club_name
+		dataType: string
+		lineageTag: 001c81d8-d36e-5183-a33b-940dcf23ed5c
+		summarizeBy: none
+		sourceColumn: club_name
+
+		annotation SummarizationSetBy = User
+
+	column dimension
+		dataType: string
+		lineageTag: fd64996b-60a5-5c72-843e-69c604196cb6
+		summarizeBy: none
+		sourceColumn: dimension
+
+		annotation SummarizationSetBy = User
+
+	column category
+		dataType: string
+		lineageTag: fd9a9ada-3a96-51f4-9448-e600f7be2686
+		summarizeBy: none
+		sourceColumn: category
+
+		annotation SummarizationSetBy = User
+
+	column players
+		dataType: int64
+		lineageTag: 0e4ad6e1-c0d8-57cb-b095-519ca1fa6b4c
+		summarizeBy: none
+		sourceColumn: players
+
+		annotation SummarizationSetBy = User
+
+	column value_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: fa26f489-113d-5213-9373-ea33fa962d2b
+		summarizeBy: none
+		sourceColumn: value_eur
+
+		annotation SummarizationSetBy = User
+
+	column value_share_pct
+		dataType: double
+		formatString: 0.0\%
+		lineageTag: 5e381946-e241-59f6-be7a-05a02948f531
+		summarizeBy: none
+		sourceColumn: value_share_pct
+
+		annotation SummarizationSetBy = User
+
+	partition Composition = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    Data = Source{[Schema = "rpt", Item = "vw_portfolio_composition"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

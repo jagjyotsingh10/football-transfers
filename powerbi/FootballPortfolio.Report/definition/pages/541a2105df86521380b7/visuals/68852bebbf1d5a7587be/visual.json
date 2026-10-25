@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "68852bebbf1d5a7587be",
+  "position": {
+    "x": 650,
+    "y": 84,
+    "z": 5000,
+    "width": 610,
+    "height": 290,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "value_rank"
+                }
+              },
+              "queryRef": "Value vs Points.value_rank",
+              "nativeQueryRef": "value_rank",
+              "displayName": "Value rank in league at season start"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "Avg Points per Game"
+                }
+              },
+              "queryRef": "Value vs Points.Avg Points per Game",
+              "nativeQueryRef": "Avg Points per Game",
+              "displayName": "Points per game"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Value vs Points"
+                  }
+                },
+                "Property": "value_rank"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Points per game by value rank (Q11)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

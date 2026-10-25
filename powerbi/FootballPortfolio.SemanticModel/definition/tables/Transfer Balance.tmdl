@@ -1,0 +1,126 @@
+table 'Transfer Balance'
+	lineageTag: 9872b8c2-8555-57d4-b1a3-b93bf14ef887
+
+	measure 'Fees Paid' = SUM('Transfer Balance'[fees_paid_eur])
+		formatString: €#,0,,\m
+		lineageTag: 82aa319f-342c-5ad4-b249-a1e4b8f5163c
+
+	measure 'Fees Received' = SUM('Transfer Balance'[fees_received_eur])
+		formatString: €#,0,,\m
+		lineageTag: 378b727c-e097-545b-a686-979274ed4e4f
+
+	measure 'Net Spend' = [Fees Paid] - [Fees Received]
+		formatString: €#,0,,\m
+		lineageTag: 608388b7-414a-55be-b4f2-31f9a3447fe6
+
+	column competition_id
+		dataType: string
+		isHidden
+		lineageTag: 09e6b916-0481-5e25-8900-ac10860bc6bc
+		summarizeBy: none
+		sourceColumn: competition_id
+
+		annotation SummarizationSetBy = User
+
+	column season_start_year
+		dataType: int64
+		lineageTag: 43ab50e3-cc97-5d84-9d7c-bf3dcd92ce3b
+		summarizeBy: none
+		sourceColumn: season_start_year
+
+		annotation SummarizationSetBy = User
+
+	column season_label
+		dataType: string
+		lineageTag: 03e8de75-6718-5d11-b39c-0d7a39516f7f
+		summarizeBy: none
+		sourceColumn: season_label
+
+		annotation SummarizationSetBy = User
+
+	column club_id
+		dataType: int64
+		isHidden
+		lineageTag: 02618d07-6307-5eba-87a2-6f05c8dc7382
+		summarizeBy: none
+		sourceColumn: club_id
+
+		annotation SummarizationSetBy = User
+
+	column club_name
+		dataType: string
+		lineageTag: f7b33213-0315-5d4a-aea6-7a7291aae09e
+		summarizeBy: none
+		sourceColumn: club_name
+
+		annotation SummarizationSetBy = User
+
+	column fees_paid_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: bbb11b53-8e60-57d0-bc40-f04c9643c885
+		summarizeBy: none
+		sourceColumn: fees_paid_eur
+
+		annotation SummarizationSetBy = User
+
+	column fees_received_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: 86d22675-01fc-5747-8a7b-fd156658cf27
+		summarizeBy: none
+		sourceColumn: fees_received_eur
+
+		annotation SummarizationSetBy = User
+
+	column net_spend_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: 3d1237a1-fcc0-5feb-8524-9f57af45d3f4
+		summarizeBy: none
+		sourceColumn: net_spend_eur
+
+		annotation SummarizationSetBy = User
+
+	column deals_in
+		dataType: int64
+		lineageTag: beaeb122-6f8f-57fb-ac44-6a36f577691a
+		summarizeBy: none
+		sourceColumn: deals_in
+
+		annotation SummarizationSetBy = User
+
+	column deals_out
+		dataType: int64
+		lineageTag: 76c22288-ad88-50d8-b7a7-9d7ca1b17c84
+		summarizeBy: none
+		sourceColumn: deals_out
+
+		annotation SummarizationSetBy = User
+
+	column unknown_fee_deals_in
+		dataType: int64
+		lineageTag: 1c971f7d-497f-5192-928e-ee34b1e274c5
+		summarizeBy: none
+		sourceColumn: unknown_fee_deals_in
+
+		annotation SummarizationSetBy = User
+
+	column unknown_fee_deals_out
+		dataType: int64
+		lineageTag: 71309f57-e362-5ca0-9ea8-82cee92bca4c
+		summarizeBy: none
+		sourceColumn: unknown_fee_deals_out
+
+		annotation SummarizationSetBy = User
+
+	partition 'Transfer Balance' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    Data = Source{[Schema = "rpt", Item = "vw_club_transfer_balance"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

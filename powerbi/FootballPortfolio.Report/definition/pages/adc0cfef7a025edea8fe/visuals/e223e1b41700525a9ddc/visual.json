@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "e223e1b41700525a9ddc",
+  "position": {
+    "x": 20,
+    "y": 410,
+    "z": 4000,
+    "width": 370,
+    "height": 290,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Fee vs Value"
+                    }
+                  },
+                  "Property": "price_band"
+                }
+              },
+              "queryRef": "Fee vs Value.price_band",
+              "nativeQueryRef": "price_band",
+              "displayName": "Fee vs market value"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Fee vs Value"
+                    }
+                  },
+                  "Property": "Deals"
+                }
+              },
+              "queryRef": "Fee vs Value.Deals",
+              "nativeQueryRef": "Deals",
+              "displayName": "Deals"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Fee vs Value"
+                  }
+                },
+                "Property": "Deals"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Fee vs market value at transfer (Q8)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

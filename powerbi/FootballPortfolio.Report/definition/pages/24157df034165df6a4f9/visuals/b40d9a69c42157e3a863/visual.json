@@ -1,0 +1,117 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "b40d9a69c42157e3a863",
+  "position": {
+    "x": 430,
+    "y": 84,
+    "z": 3000,
+    "width": 420,
+    "height": 300,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Portfolio"
+                    }
+                  },
+                  "Property": "closes_season_label"
+                }
+              },
+              "queryRef": "Club Portfolio.closes_season_label",
+              "nativeQueryRef": "closes_season_label",
+              "displayName": "Season ending"
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Portfolio"
+                    }
+                  },
+                  "Property": "competition_name"
+                }
+              },
+              "queryRef": "Club Portfolio.competition_name",
+              "nativeQueryRef": "competition_name",
+              "displayName": "League"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Portfolio"
+                    }
+                  },
+                  "Property": "Declining Exposure"
+                }
+              },
+              "queryRef": "Club Portfolio.Declining Exposure",
+              "nativeQueryRef": "Declining Exposure",
+              "displayName": "Declining exposure"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Club Portfolio"
+                  }
+                },
+                "Property": "closes_season_label"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Share of value in declining players (Q4)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "d581ca8d7a2555d9b9e1",
+  "position": {
+    "x": 330,
+    "y": 84,
+    "z": 3000,
+    "width": 300,
+    "height": 100,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Portfolio"
+                    }
+                  },
+                  "Property": "Growth since June 2020"
+                }
+              },
+              "queryRef": "Club Portfolio.Growth since June 2020",
+              "nativeQueryRef": "Growth since June 2020",
+              "displayName": "Growth since June 2020"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

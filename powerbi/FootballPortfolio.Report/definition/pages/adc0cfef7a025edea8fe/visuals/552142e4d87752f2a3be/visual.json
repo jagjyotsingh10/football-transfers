@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "552142e4d87752f2a3be",
+  "position": {
+    "x": 790,
+    "y": 84,
+    "z": 3000,
+    "width": 470,
+    "height": 616,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Transfer Balance"
+                    }
+                  },
+                  "Property": "club_name"
+                }
+              },
+              "queryRef": "Transfer Balance.club_name",
+              "nativeQueryRef": "club_name",
+              "displayName": "Club"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Transfer Balance"
+                    }
+                  },
+                  "Property": "Net Spend"
+                }
+              },
+              "queryRef": "Transfer Balance.Net Spend",
+              "nativeQueryRef": "Net Spend",
+              "displayName": "Net spend"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Transfer Balance"
+                  }
+                },
+                "Property": "Net Spend"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Fees paid minus received, 2020/21-2025/26 (Q7)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

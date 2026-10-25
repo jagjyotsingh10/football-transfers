@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "364af893edc7591c8cf5",
+  "position": {
+    "x": 20,
+    "y": 84,
+    "z": 2000,
+    "width": 400,
+    "height": 616,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Portfolio"
+                    }
+                  },
+                  "Property": "club_name"
+                }
+              },
+              "queryRef": "Club Portfolio.club_name",
+              "nativeQueryRef": "club_name",
+              "displayName": "Club"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Portfolio"
+                    }
+                  },
+                  "Property": "Top-5 Share (latest)"
+                }
+              },
+              "queryRef": "Club Portfolio.Top-5 Share (latest)",
+              "nativeQueryRef": "Top-5 Share (latest)",
+              "displayName": "Top-5 share"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Club Portfolio"
+                  }
+                },
+                "Property": "Top-5 Share (latest)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Value held by top 5 players, June 2026 (Q2)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

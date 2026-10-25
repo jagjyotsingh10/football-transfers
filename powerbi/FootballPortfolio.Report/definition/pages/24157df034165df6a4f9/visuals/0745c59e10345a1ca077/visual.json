@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "0745c59e10345a1ca077",
+  "position": {
+    "x": 430,
+    "y": 394,
+    "z": 4000,
+    "width": 420,
+    "height": 306,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Portfolio"
+                    }
+                  },
+                  "Property": "club_name"
+                }
+              },
+              "queryRef": "Club Portfolio.club_name",
+              "nativeQueryRef": "club_name",
+              "displayName": "Club"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Portfolio"
+                    }
+                  },
+                  "Property": "Declining Exposure (latest)"
+                }
+              },
+              "queryRef": "Club Portfolio.Declining Exposure (latest)",
+              "nativeQueryRef": "Declining Exposure (latest)",
+              "displayName": "Declining exposure"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Club Portfolio"
+                  }
+                },
+                "Property": "Declining Exposure (latest)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Most exposed to declining values, June 2026 (Q4)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

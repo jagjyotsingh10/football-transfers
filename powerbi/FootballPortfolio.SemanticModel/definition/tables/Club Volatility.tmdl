@@ -1,0 +1,86 @@
+table 'Club Volatility'
+	lineageTag: 0c8a8180-490a-5bb4-b355-d3bcc7c4204e
+
+	measure 'Portfolio Volatility (latest)' = VAR d = CALCULATE(MAX('Club Volatility'[snapshot_date]), ALL('Club Volatility')) RETURN CALCULATE(AVERAGE('Club Volatility'[portfolio_volatility_pct]), 'Club Volatility'[snapshot_date] = d) / 100
+		formatString: 0.0%
+		lineageTag: ebcd7349-3983-52d8-9124-df6e473df1d4
+
+	column snapshot_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 88968b58-6fd2-54ca-9429-610b741769e5
+		summarizeBy: none
+		sourceColumn: snapshot_date
+
+		annotation SummarizationSetBy = User
+
+	column closes_season_label
+		dataType: string
+		lineageTag: de5b8a14-65d4-515f-b786-1a043b70ab38
+		summarizeBy: none
+		sourceColumn: closes_season_label
+
+		annotation SummarizationSetBy = User
+
+	column competition_id
+		dataType: string
+		isHidden
+		lineageTag: 6821c004-e1cf-530b-aebe-ff09be973c77
+		summarizeBy: none
+		sourceColumn: competition_id
+
+		annotation SummarizationSetBy = User
+
+	column club_id
+		dataType: int64
+		isHidden
+		lineageTag: 56a738f6-a2d0-557c-b87e-e5db80298c4b
+		summarizeBy: none
+		sourceColumn: club_id
+
+		annotation SummarizationSetBy = User
+
+	column club_name
+		dataType: string
+		lineageTag: 0672a2bd-13be-5fc9-97c1-f0d745fa234d
+		summarizeBy: none
+		sourceColumn: club_name
+
+		annotation SummarizationSetBy = User
+
+	column players_measured
+		dataType: int64
+		lineageTag: 8921c9cb-8587-5bd0-90fb-475f8891659d
+		summarizeBy: none
+		sourceColumn: players_measured
+
+		annotation SummarizationSetBy = User
+
+	column value_covered_pct
+		dataType: double
+		formatString: 0.0\%
+		lineageTag: 9cb01956-21a7-51c1-a8a3-335f6292c15c
+		summarizeBy: none
+		sourceColumn: value_covered_pct
+
+		annotation SummarizationSetBy = User
+
+	column portfolio_volatility_pct
+		dataType: double
+		formatString: 0.0\%
+		lineageTag: ba3922a7-864c-5c8f-ab1e-231123cc7039
+		summarizeBy: none
+		sourceColumn: portfolio_volatility_pct
+
+		annotation SummarizationSetBy = User
+
+	partition 'Club Volatility' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    Data = Source{[Schema = "rpt", Item = "vw_club_volatility"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

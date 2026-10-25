@@ -1,0 +1,39 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "81221c5e8f805cc58fcf",
+  "position": {
+    "x": 20,
+    "y": 84,
+    "z": 2000,
+    "width": 300,
+    "height": 100,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Portfolio"
+                    }
+                  },
+                  "Property": "Portfolio Value (latest)"
+                }
+              },
+              "queryRef": "Club Portfolio.Portfolio Value (latest)",
+              "nativeQueryRef": "Portfolio Value (latest)",
+              "displayName": "Portfolio value, June 2026"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

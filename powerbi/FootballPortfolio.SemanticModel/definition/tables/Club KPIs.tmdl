@@ -1,0 +1,177 @@
+table 'Club KPIs'
+	lineageTag: 3884746c-3f19-5ddc-af11-d211b2cd0ad7
+
+	measure 'KPI Portfolio Value' = SUM('Club KPIs'[total_value_eur])
+		formatString: €#,0,,\m
+		lineageTag: 542dec9c-2de6-5a80-9d29-960921a93b66
+
+	measure 'Value-Weighted Age' = AVERAGE('Club KPIs'[value_weighted_age])
+		formatString: 0.0
+		lineageTag: b04b5494-4a23-5229-90c3-b409dc0848ef
+
+	column competition_id
+		dataType: string
+		isHidden
+		lineageTag: ad08dd9c-eb7f-5d03-99bf-19a234991cbe
+		summarizeBy: none
+		sourceColumn: competition_id
+
+		annotation SummarizationSetBy = User
+
+	column competition_name
+		dataType: string
+		lineageTag: 2cd29e51-48b6-5abf-ab14-f7586c1c5feb
+		summarizeBy: none
+		sourceColumn: competition_name
+
+		annotation SummarizationSetBy = User
+
+	column club_id
+		dataType: int64
+		isHidden
+		lineageTag: 3a9eac52-30e8-54a8-9a1e-54715ac72fe3
+		summarizeBy: none
+		sourceColumn: club_id
+
+		annotation SummarizationSetBy = User
+
+	column club_name
+		dataType: string
+		lineageTag: 1ff9c569-9137-5e02-aa3c-d0b41db2fbcf
+		summarizeBy: none
+		sourceColumn: club_name
+
+		annotation SummarizationSetBy = User
+
+	column total_value_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: 0102e773-b7e7-556c-8b41-df00a4c2d581
+		summarizeBy: none
+		sourceColumn: total_value_eur
+
+		annotation SummarizationSetBy = User
+
+	column value_rank_in_league
+		dataType: int64
+		lineageTag: 589536d4-1568-5404-bf9c-485379acddf6
+		summarizeBy: none
+		sourceColumn: value_rank_in_league
+
+		annotation SummarizationSetBy = User
+
+	column squad_size
+		dataType: int64
+		lineageTag: 1a69bd73-6a5f-5f60-9e1c-43e67d0de579
+		summarizeBy: none
+		sourceColumn: squad_size
+
+		annotation SummarizationSetBy = User
+
+	column avg_value_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: c068df12-c56e-5875-a903-ffecd2d1f813
+		summarizeBy: none
+		sourceColumn: avg_value_eur
+
+		annotation SummarizationSetBy = User
+
+	column avg_value_index_league
+		dataType: double
+		lineageTag: e5dde632-8eec-5c05-bb2b-e50a23be0e13
+		summarizeBy: none
+		sourceColumn: avg_value_index_league
+
+		annotation SummarizationSetBy = User
+
+	column top5_share_pct
+		dataType: double
+		formatString: 0.0\%
+		lineageTag: c97d8699-f4f9-52d7-be4b-9b8181e24e9f
+		summarizeBy: none
+		sourceColumn: top5_share_pct
+
+		annotation SummarizationSetBy = User
+
+	column value_weighted_age
+		dataType: double
+		lineageTag: fcaa72ff-29e8-521a-930e-52ed3e4d2823
+		summarizeBy: none
+		sourceColumn: value_weighted_age
+
+		annotation SummarizationSetBy = User
+
+	column growth_last_year_pct
+		dataType: double
+		formatString: 0.0\%
+		lineageTag: 28c73fd3-53fa-5cef-9afa-48b571c31ecb
+		summarizeBy: none
+		sourceColumn: growth_last_year_pct
+
+		annotation SummarizationSetBy = User
+
+	column value_2020_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: 3a5753c4-a1e2-56b5-852e-235529aebe19
+		summarizeBy: none
+		sourceColumn: value_2020_eur
+
+		annotation SummarizationSetBy = User
+
+	column cagr_2020_2026_pct
+		dataType: double
+		formatString: 0.0\%
+		lineageTag: a9230d8a-71fb-5e3c-81f0-d28e46356e89
+		summarizeBy: none
+		sourceColumn: cagr_2020_2026_pct
+
+		annotation SummarizationSetBy = User
+
+	column goalkeeper_share_pct
+		dataType: double
+		formatString: 0.0\%
+		lineageTag: 0787dbda-b0bf-55e1-a6f3-6e91b189d599
+		summarizeBy: none
+		sourceColumn: goalkeeper_share_pct
+
+		annotation SummarizationSetBy = User
+
+	column defender_share_pct
+		dataType: double
+		formatString: 0.0\%
+		lineageTag: 5e1ac0f2-0045-59df-8d62-e1284e1248c3
+		summarizeBy: none
+		sourceColumn: defender_share_pct
+
+		annotation SummarizationSetBy = User
+
+	column midfield_share_pct
+		dataType: double
+		formatString: 0.0\%
+		lineageTag: f62cd73c-b5fa-5be6-b6a9-218629f09d18
+		summarizeBy: none
+		sourceColumn: midfield_share_pct
+
+		annotation SummarizationSetBy = User
+
+	column attack_share_pct
+		dataType: double
+		formatString: 0.0\%
+		lineageTag: c16fa545-acec-56b0-b2df-d24971a89202
+		summarizeBy: none
+		sourceColumn: attack_share_pct
+
+		annotation SummarizationSetBy = User
+
+	partition 'Club KPIs' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    Data = Source{[Schema = "rpt", Item = "vw_club_kpis"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

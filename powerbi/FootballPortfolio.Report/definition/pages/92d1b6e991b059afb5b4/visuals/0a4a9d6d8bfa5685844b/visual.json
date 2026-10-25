@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "0a4a9d6d8bfa5685844b",
+  "position": {
+    "x": 850,
+    "y": 410,
+    "z": 5000,
+    "width": 410,
+    "height": 290,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Portfolio"
+                    }
+                  },
+                  "Property": "club_name"
+                }
+              },
+              "queryRef": "Club Portfolio.club_name",
+              "nativeQueryRef": "club_name",
+              "displayName": "Club"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Portfolio"
+                    }
+                  },
+                  "Property": "Avg Value per Player (latest)"
+                }
+              },
+              "queryRef": "Club Portfolio.Avg Value per Player (latest)",
+              "nativeQueryRef": "Avg Value per Player (latest)",
+              "displayName": "Avg value per player"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Club Portfolio"
+                  }
+                },
+                "Property": "Avg Value per Player (latest)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Average value per player, June 2026 (Q10)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

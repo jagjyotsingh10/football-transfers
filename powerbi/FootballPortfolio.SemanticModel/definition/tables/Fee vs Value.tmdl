@@ -1,0 +1,167 @@
+table 'Fee vs Value'
+	lineageTag: 76ce162f-0509-5b43-afe7-4b9d011be778
+
+	measure Deals = COUNTROWS('Fee vs Value')
+		formatString: #,0
+		lineageTag: 0949e541-451f-5078-bde8-85b5da6b0e3c
+
+	measure 'Fee-to-Value Ratio' = DIVIDE(CALCULATE(SUM('Fee vs Value'[fee_eur]), 'Fee vs Value'[market_value_at_transfer_eur] > 0), CALCULATE(SUM('Fee vs Value'[market_value_at_transfer_eur]), 'Fee vs Value'[market_value_at_transfer_eur] > 0))
+		formatString: 0.00
+		lineageTag: 220aefc1-cf4a-5ed6-bf72-a1ecc3291a02
+
+	column transfer_key
+		dataType: int64
+		lineageTag: 1a903fa0-50f2-5b84-9605-b9aae6150c87
+		summarizeBy: none
+		sourceColumn: transfer_key
+
+		annotation SummarizationSetBy = User
+
+	column transfer_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: bd90301d-38c8-53c9-93e9-2d95a2c865ea
+		summarizeBy: none
+		sourceColumn: transfer_date
+
+		annotation SummarizationSetBy = User
+
+	column season_label
+		dataType: string
+		lineageTag: 7d4c01fe-b67c-55dc-bc00-bf5f27a3b1b2
+		summarizeBy: none
+		sourceColumn: season_label
+
+		annotation SummarizationSetBy = User
+
+	column player_id
+		dataType: int64
+		isHidden
+		lineageTag: c4fc877d-710b-54de-810e-09314507c09d
+		summarizeBy: none
+		sourceColumn: player_id
+
+		annotation SummarizationSetBy = User
+
+	column player_name
+		dataType: string
+		lineageTag: d9072ee2-eb56-581b-98ab-1150c4f21ea5
+		summarizeBy: none
+		sourceColumn: player_name
+
+		annotation SummarizationSetBy = User
+
+	column position
+		dataType: string
+		lineageTag: db8b0ea0-ff9b-5758-8683-8277f051f763
+		summarizeBy: none
+		sourceColumn: position
+
+		annotation SummarizationSetBy = User
+
+	column from_club_id
+		dataType: int64
+		isHidden
+		lineageTag: 83ae0625-4a7a-54af-82e8-a8c6d11de7fe
+		summarizeBy: none
+		sourceColumn: from_club_id
+
+		annotation SummarizationSetBy = User
+
+	column from_club_name
+		dataType: string
+		lineageTag: 055b88e4-f4db-53e9-9aa9-55af0043f18d
+		summarizeBy: none
+		sourceColumn: from_club_name
+
+		annotation SummarizationSetBy = User
+
+	column seller_competition_id
+		dataType: string
+		isHidden
+		lineageTag: a390bfb8-c6eb-5305-9835-e77e5eb65fdb
+		summarizeBy: none
+		sourceColumn: seller_competition_id
+
+		annotation SummarizationSetBy = User
+
+	column to_club_id
+		dataType: int64
+		isHidden
+		lineageTag: a5f8512d-ffd1-5d1b-a389-d0b3240e226a
+		summarizeBy: none
+		sourceColumn: to_club_id
+
+		annotation SummarizationSetBy = User
+
+	column to_club_name
+		dataType: string
+		lineageTag: 17678b22-459f-5612-8e19-d4f4c44f6faa
+		summarizeBy: none
+		sourceColumn: to_club_name
+
+		annotation SummarizationSetBy = User
+
+	column buyer_competition_id
+		dataType: string
+		isHidden
+		lineageTag: 87e655ed-7bc5-5514-a515-191428129f6f
+		summarizeBy: none
+		sourceColumn: buyer_competition_id
+
+		annotation SummarizationSetBy = User
+
+	column fee_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: ee7725e7-5718-564e-8c57-f852a28d26d2
+		summarizeBy: none
+		sourceColumn: fee_eur
+
+		annotation SummarizationSetBy = User
+
+	column market_value_at_transfer_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: ba16a5c8-d472-5e92-812d-1575d123f59a
+		summarizeBy: none
+		sourceColumn: market_value_at_transfer_eur
+
+		annotation SummarizationSetBy = User
+
+	column premium_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: 226926a5-1831-5d25-9b91-5f2ac602328c
+		summarizeBy: none
+		sourceColumn: premium_eur
+
+		annotation SummarizationSetBy = User
+
+	column premium_pct
+		dataType: double
+		formatString: 0.0\%
+		lineageTag: 810cf5d6-7147-5a5a-9b53-006b9b8a3730
+		summarizeBy: none
+		sourceColumn: premium_pct
+
+		annotation SummarizationSetBy = User
+
+	column price_band
+		dataType: string
+		lineageTag: 2de085ce-f7ac-595d-8b97-c0490825d2f3
+		summarizeBy: none
+		sourceColumn: price_band
+
+		annotation SummarizationSetBy = User
+
+	partition 'Fee vs Value' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    Data = Source{[Schema = "rpt", Item = "vw_fee_vs_value"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

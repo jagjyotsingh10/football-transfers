@@ -1,0 +1,99 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "682eb42e08b5551dbeec",
+  "position": {
+    "x": 20,
+    "y": 196,
+    "z": 4000,
+    "width": 620,
+    "height": 504,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "scatterChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "club_season"
+                }
+              },
+              "queryRef": "Value vs Points.club_season",
+              "nativeQueryRef": "club_season",
+              "displayName": "Club-season"
+            }
+          ]
+        },
+        "X": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "Avg Value Index"
+                }
+              },
+              "queryRef": "Value vs Points.Avg Value Index",
+              "nativeQueryRef": "Avg Value Index",
+              "displayName": "Value vs league average (1 = average)"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "Avg Points per Game"
+                }
+              },
+              "queryRef": "Value vs Points.Avg Points per Game",
+              "nativeQueryRef": "Avg Points per Game",
+              "displayName": "Points per game"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Season-start value vs points per game (Q11)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

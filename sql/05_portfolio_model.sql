@@ -515,6 +515,7 @@ fit AS (
     FROM xy
 )
 SELECT competition_id, competition_name, season_start_year, season_label, club_id, club_name,
+       CONCAT(club_name, N' ', season_label)                                    AS club_season,  -- one point per club-season in charts
        played, points, points_per_game, position, official_position, clubs_in_league,
        season_start_value_eur, squad_size, value_rank,
        CAST(value_index AS DECIMAL(6,2))                                        AS value_index,  -- 1 = league average

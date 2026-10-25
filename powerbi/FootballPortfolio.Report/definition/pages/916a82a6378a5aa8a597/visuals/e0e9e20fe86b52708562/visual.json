@@ -1,0 +1,117 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "e0e9e20fe86b52708562",
+  "position": {
+    "x": 20,
+    "y": 196,
+    "z": 6000,
+    "width": 760,
+    "height": 504,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Portfolio"
+                    }
+                  },
+                  "Property": "closes_season_label"
+                }
+              },
+              "queryRef": "Club Portfolio.closes_season_label",
+              "nativeQueryRef": "closes_season_label",
+              "displayName": "Season ending"
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Portfolio"
+                    }
+                  },
+                  "Property": "competition_name"
+                }
+              },
+              "queryRef": "Club Portfolio.competition_name",
+              "nativeQueryRef": "competition_name",
+              "displayName": "League"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Portfolio"
+                    }
+                  },
+                  "Property": "Portfolio Value"
+                }
+              },
+              "queryRef": "Club Portfolio.Portfolio Value",
+              "nativeQueryRef": "Portfolio Value",
+              "displayName": "Portfolio value"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Club Portfolio"
+                  }
+                },
+                "Property": "closes_season_label"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Total portfolio value by league (Q1)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

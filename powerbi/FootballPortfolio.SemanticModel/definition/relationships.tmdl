@@ -1,0 +1,63 @@
+relationship e14bf98b-fe03-5ff6-9a83-9dad92b637bb
+	fromColumn: 'Club Portfolio'.competition_id
+	toColumn: League.competition_id
+
+relationship bf3e32d9-b696-520d-9f7f-0a9666bd3717
+	fromColumn: Composition.competition_id
+	toColumn: League.competition_id
+
+relationship 5b782d08-4266-5b06-8f2c-e42cadc3fa56
+	fromColumn: 'Club KPIs'.competition_id
+	toColumn: League.competition_id
+
+relationship 1e8503a4-fad2-5ccc-8e90-ddee0dd18d4e
+	fromColumn: 'Club Volatility'.competition_id
+	toColumn: League.competition_id
+
+relationship 8fc9fca3-df70-50cb-9754-5a9002c0b10f
+	fromColumn: Signings.competition_id
+	toColumn: League.competition_id
+
+relationship 92dbc5e9-bb09-5484-8440-1bffca64b0ef
+	fromColumn: 'Fee vs Value'.buyer_competition_id
+	toColumn: League.competition_id
+
+relationship 92e51ded-11ab-5567-b4e9-1723bfcf40a7
+	fromColumn: 'Transfer Balance'.competition_id
+	toColumn: League.competition_id
+
+relationship 6ee4ac41-e616-5cca-98d3-174b35ffe7f8
+	fromColumn: 'Value vs Points'.competition_id
+	toColumn: League.competition_id
+
+relationship fbb56e13-0b35-5073-8fac-299b15165669
+	fromColumn: 'Club Portfolio'.club_id
+	toColumn: Club.club_id
+
+relationship b6958e34-4c10-59d6-a8c9-24582b2db3ac
+	fromColumn: Composition.club_id
+	toColumn: Club.club_id
+
+relationship d27c7d33-c247-524f-b3cb-abbba729a365
+	fromColumn: 'Club KPIs'.club_id
+	toColumn: Club.club_id
+
+relationship 7f079706-719e-57ce-9724-75f832e4a038
+	fromColumn: 'Club Volatility'.club_id
+	toColumn: Club.club_id
+
+relationship 7b2c5379-093c-5d3e-9b57-afe03f65e98f
+	fromColumn: Signings.club_id
+	toColumn: Club.club_id
+
+relationship 0d1fc755-9ca0-5bdf-a1bf-9d844884c348
+	fromColumn: 'Fee vs Value'.to_club_id
+	toColumn: Club.club_id
+
+relationship d4d3cf1d-d493-5fe8-9c24-2fea7c0d4e36
+	fromColumn: 'Transfer Balance'.club_id
+	toColumn: Club.club_id
+
+relationship af48beee-abd3-5ac4-b5ba-dabe78fbec0e
+	fromColumn: 'Value vs Points'.club_id
+	toColumn: Club.club_id

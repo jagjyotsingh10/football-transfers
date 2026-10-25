@@ -9,3 +9,7 @@ __pycache__/
 
 # Power BI cache
 *.pbix.bak
+
+# Power BI project: local settings and the data cache stay out of git
+**/.pbi/localSettings.json
+**/.pbi/cache.abf

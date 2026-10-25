@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "1b922f56c3455434b8d5",
+  "position": {
+    "x": 860,
+    "y": 84,
+    "z": 5000,
+    "width": 400,
+    "height": 616,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Volatility"
+                    }
+                  },
+                  "Property": "club_name"
+                }
+              },
+              "queryRef": "Club Volatility.club_name",
+              "nativeQueryRef": "club_name",
+              "displayName": "Club"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club Volatility"
+                    }
+                  },
+                  "Property": "Portfolio Volatility (latest)"
+                }
+              },
+              "queryRef": "Club Volatility.Portfolio Volatility (latest)",
+              "nativeQueryRef": "Portfolio Volatility (latest)",
+              "displayName": "Volatility"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Club Volatility"
+                  }
+                },
+                "Property": "Portfolio Volatility (latest)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Portfolio volatility per revaluation (Q9)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

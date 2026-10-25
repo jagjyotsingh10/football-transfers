@@ -1,0 +1,278 @@
+table 'Club Portfolio'
+	lineageTag: 7ccd48a5-2036-5a12-930f-07555c65d10c
+
+	measure 'Portfolio Value' = SUM('Club Portfolio'[total_value_eur])
+		formatString: €#,0,,\m
+		lineageTag: 5deebe3f-7ea1-565d-b3b1-65aeb0980ec3
+
+	measure 'Latest Snapshot' = CALCULATE(MAX('Club Portfolio'[snapshot_date]), ALL('Club Portfolio'))
+		formatString: yyyy-mm-dd
+		lineageTag: ca81af19-cf36-5e2a-8396-0432eaaebfd8
+
+	measure 'Portfolio Value (latest)' = VAR d = [Latest Snapshot] RETURN CALCULATE([Portfolio Value], 'Club Portfolio'[snapshot_date] = d)
+		formatString: €#,0,,\m
+		lineageTag: 9bc4282c-1ce7-539c-97b1-89f28817f0a2
+
+	measure 'Portfolio Value (June 2020)' = CALCULATE([Portfolio Value], 'Club Portfolio'[snapshot_year] = 2020)
+		formatString: €#,0,,\m
+		lineageTag: 18bc7da4-59fb-5520-b7e4-23da44d12ed9
+
+	measure 'Growth since June 2020' = DIVIDE([Portfolio Value (latest)] - [Portfolio Value (June 2020)], [Portfolio Value (June 2020)])
+		formatString: 0.0%
+		lineageTag: 06fba150-52f5-529b-b9ae-0e8d36823e75
+
+	measure 'Clubs (latest)' = VAR d = [Latest Snapshot] RETURN CALCULATE(DISTINCTCOUNT('Club Portfolio'[club_id]), 'Club Portfolio'[snapshot_date] = d)
+		formatString: 0
+		lineageTag: 91353e7f-2aaf-5cd7-930d-c62132943ede
+
+	measure 'Avg Value per Player (latest)' = VAR d = [Latest Snapshot] RETURN CALCULATE(DIVIDE(SUM('Club Portfolio'[total_value_eur]), SUM('Club Portfolio'[squad_size])), 'Club Portfolio'[snapshot_date] = d)
+		formatString: €#,0.0,,\m
+		lineageTag: 96eccf38-6c3a-5f71-ad95-0b28642e6e9a
+
+	measure 'Top-5 Share (latest)' = VAR d = [Latest Snapshot] RETURN CALCULATE(DIVIDE(SUM('Club Portfolio'[top5_value_eur]), SUM('Club Portfolio'[total_value_eur])), 'Club Portfolio'[snapshot_date] = d)
+		formatString: 0.0%
+		lineageTag: a0d0d009-1065-534f-9e34-f127e868f3b8
+
+	measure 'Declining Exposure' = DIVIDE(SUM('Club Portfolio'[declining_value_eur]), SUM('Club Portfolio'[value_with_history_eur]))
+		formatString: 0.0%
+		lineageTag: 4573abd5-eece-5249-8522-d3d6e802cfbc
+
+	measure 'Declining Exposure (latest)' = VAR d = [Latest Snapshot] RETURN CALCULATE([Declining Exposure], 'Club Portfolio'[snapshot_date] = d)
+		formatString: 0.0%
+		lineageTag: bcb858c6-5f92-52de-a4c6-dd597e674d1a
+
+	measure 'Value Lost (latest)' = VAR d = [Latest Snapshot] RETURN CALCULATE(SUM('Club Portfolio'[value_lost_eur]), 'Club Portfolio'[snapshot_date] = d)
+		formatString: €#,0.0,,\m
+		lineageTag: c0459bf3-ce9a-577b-b759-1d6a57a0fed4
+
+	column snapshot_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 6a80d652-335a-5457-ac5e-2a93a4070008
+		summarizeBy: none
+		sourceColumn: snapshot_date
+
+		annotation SummarizationSetBy = User
+
+	column snapshot_year
+		dataType: int64
+		lineageTag: 910c07d4-48bc-55d8-a592-f292b4580f8d
+		summarizeBy: none
+		sourceColumn: snapshot_year
+
+		annotation SummarizationSetBy = User
+
+	column closes_season_label
+		dataType: string
+		lineageTag: 00397d25-08d6-5d78-8bc7-173debfb5ef4
+		summarizeBy: none
+		sourceColumn: closes_season_label
+
+		annotation SummarizationSetBy = User
+
+	column is_opening
+		dataType: boolean
+		lineageTag: 9b175e1f-af6f-5029-9ebc-73ed5b727142
+		summarizeBy: none
+		sourceColumn: is_opening
+
+		annotation SummarizationSetBy = User
+
+	column competition_id
+		dataType: string
+		isHidden
+		lineageTag: 5519e4d0-566b-5b7d-87cd-63d6c58277a9
+		summarizeBy: none
+		sourceColumn: competition_id
+
+		annotation SummarizationSetBy = User
+
+	column competition_name
+		dataType: string
+		lineageTag: 2b7106f0-5b67-599d-8899-11bbb6c9b6a1
+		summarizeBy: none
+		sourceColumn: competition_name
+
+		annotation SummarizationSetBy = User
+
+	column club_id
+		dataType: int64
+		isHidden
+		lineageTag: b0488073-df6e-57ff-9d64-007780690657
+		summarizeBy: none
+		sourceColumn: club_id
+
+		annotation SummarizationSetBy = User
+
+	column club_name
+		dataType: string
+		lineageTag: 6e5dec5b-e3b7-5b3b-a1c5-8300d15a342a
+		summarizeBy: none
+		sourceColumn: club_name
+
+		annotation SummarizationSetBy = User
+
+	column squad_size
+		dataType: int64
+		lineageTag: 257c7736-10d2-572c-a4f9-b5281fb10330
+		summarizeBy: none
+		sourceColumn: squad_size
+
+		annotation SummarizationSetBy = User
+
+	column is_thin_squad
+		dataType: boolean
+		lineageTag: b86f3ee6-b5dd-5bdc-bfd4-89da524a1a9c
+		summarizeBy: none
+		sourceColumn: is_thin_squad
+
+		annotation SummarizationSetBy = User
+
+	column total_value_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: 34213d64-0f68-56ef-8833-eb761c0d88ef
+		summarizeBy: none
+		sourceColumn: total_value_eur
+
+		annotation SummarizationSetBy = User
+
+	column avg_value_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: 36075947-2eae-51b4-a748-83694ac79a2a
+		summarizeBy: none
+		sourceColumn: avg_value_eur
+
+		annotation SummarizationSetBy = User
+
+	column top5_value_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: 6432fa12-75b1-5025-95a1-2fb2f4372792
+		summarizeBy: none
+		sourceColumn: top5_value_eur
+
+		annotation SummarizationSetBy = User
+
+	column top5_share_pct
+		dataType: double
+		formatString: 0.0\%
+		lineageTag: 918a14b1-97d6-5e97-9bda-bcd03ecd8798
+		summarizeBy: none
+		sourceColumn: top5_share_pct
+
+		annotation SummarizationSetBy = User
+
+	column value_change_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: cb6ba8c6-9412-562b-b639-a7ba14eb65da
+		summarizeBy: none
+		sourceColumn: value_change_eur
+
+		annotation SummarizationSetBy = User
+
+	column value_change_pct
+		dataType: double
+		formatString: 0.0\%
+		lineageTag: 759f020a-487f-5282-a906-9b21a89be28d
+		summarizeBy: none
+		sourceColumn: value_change_pct
+
+		annotation SummarizationSetBy = User
+
+	column declining_players
+		dataType: int64
+		lineageTag: 729e33bf-d3df-51bc-9e84-45436d7d7b8b
+		summarizeBy: none
+		sourceColumn: declining_players
+
+		annotation SummarizationSetBy = User
+
+	column value_with_history_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: 1024f071-61fc-5edb-83a8-3b618b0d34c8
+		summarizeBy: none
+		sourceColumn: value_with_history_eur
+
+		annotation SummarizationSetBy = User
+
+	column declining_value_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: 310d9f92-8b6d-5346-a0b7-8aa9925754d6
+		summarizeBy: none
+		sourceColumn: declining_value_eur
+
+		annotation SummarizationSetBy = User
+
+	column value_lost_eur
+		dataType: double
+		formatString: €#,0.0,,\m
+		lineageTag: eb2dc5f4-cdb7-593a-9548-2765454abcce
+		summarizeBy: none
+		sourceColumn: value_lost_eur
+
+		annotation SummarizationSetBy = User
+
+	column declining_exposure_pct
+		dataType: double
+		formatString: 0.0\%
+		lineageTag: ad075515-5d9b-51c1-b84f-9780d03c7aec
+		summarizeBy: none
+		sourceColumn: declining_exposure_pct
+
+		annotation SummarizationSetBy = User
+
+	column avg_age
+		dataType: double
+		lineageTag: 17da8943-b31b-5573-a5a1-6176c3fd6511
+		summarizeBy: none
+		sourceColumn: avg_age
+
+		annotation SummarizationSetBy = User
+
+	column value_weighted_age
+		dataType: double
+		lineageTag: 0ceb3188-7556-50bf-8928-1f1cdca61c23
+		summarizeBy: none
+		sourceColumn: value_weighted_age
+
+		annotation SummarizationSetBy = User
+
+	column value_rank_in_league
+		dataType: int64
+		lineageTag: 8c3e4aaa-6b7c-5135-9462-b410705331ee
+		summarizeBy: none
+		sourceColumn: value_rank_in_league
+
+		annotation SummarizationSetBy = User
+
+	column avg_value_index_league
+		dataType: double
+		lineageTag: 8ccd7a51-5472-52fb-b920-bd300daa4586
+		summarizeBy: none
+		sourceColumn: avg_value_index_league
+
+		annotation SummarizationSetBy = User
+
+	column avg_value_index_top5
+		dataType: double
+		lineageTag: 98fdf886-6296-592d-b282-d981d550a661
+		summarizeBy: none
+		sourceColumn: avg_value_index_top5
+
+		annotation SummarizationSetBy = User
+
+	partition 'Club Portfolio' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    Data = Source{[Schema = "rpt", Item = "vw_club_portfolio"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

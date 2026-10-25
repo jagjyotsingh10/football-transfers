@@ -1,0 +1,117 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "0a3e76d4af785128a26b",
+  "position": {
+    "x": 430,
+    "y": 410,
+    "z": 4000,
+    "width": 410,
+    "height": 290,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "hundredPercentStackedColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Composition"
+                    }
+                  },
+                  "Property": "closes_season_label"
+                }
+              },
+              "queryRef": "Composition.closes_season_label",
+              "nativeQueryRef": "closes_season_label",
+              "displayName": "Season ending"
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Composition"
+                    }
+                  },
+                  "Property": "category"
+                }
+              },
+              "queryRef": "Composition.category",
+              "nativeQueryRef": "category",
+              "displayName": "Age band"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Composition"
+                    }
+                  },
+                  "Property": "Age Band Value"
+                }
+              },
+              "queryRef": "Composition.Age Band Value",
+              "nativeQueryRef": "Age Band Value",
+              "displayName": "Value"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Composition"
+                  }
+                },
+                "Property": "closes_season_label"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Share of value by age band (Q6)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

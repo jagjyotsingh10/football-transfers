@@ -1,0 +1,39 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "05935be32ac3562eb252",
+  "position": {
+    "x": 335,
+    "y": 84,
+    "z": 3000,
+    "width": 305,
+    "height": 100,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "Top-4 Rate (most valuable squad)"
+                }
+              },
+              "queryRef": "Value vs Points.Top-4 Rate (most valuable squad)",
+              "nativeQueryRef": "Top-4 Rate (most valuable squad)",
+              "displayName": "Most valuable squad finished top 4"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

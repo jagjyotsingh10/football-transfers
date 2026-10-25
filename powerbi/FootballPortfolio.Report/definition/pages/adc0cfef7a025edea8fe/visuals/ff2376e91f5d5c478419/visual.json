@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "ff2376e91f5d5c478419",
+  "position": {
+    "x": 400,
+    "y": 410,
+    "z": 5000,
+    "width": 380,
+    "height": 290,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "League"
+                    }
+                  },
+                  "Property": "competition_name"
+                }
+              },
+              "queryRef": "League.competition_name",
+              "nativeQueryRef": "competition_name",
+              "displayName": "Buying league"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Fee vs Value"
+                    }
+                  },
+                  "Property": "Fee-to-Value Ratio"
+                }
+              },
+              "queryRef": "Fee vs Value.Fee-to-Value Ratio",
+              "nativeQueryRef": "Fee-to-Value Ratio",
+              "displayName": "Fee ÷ market value"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Fee vs Value"
+                  }
+                },
+                "Property": "Fee-to-Value Ratio"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Fee paid per €1 of market value (Q8)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

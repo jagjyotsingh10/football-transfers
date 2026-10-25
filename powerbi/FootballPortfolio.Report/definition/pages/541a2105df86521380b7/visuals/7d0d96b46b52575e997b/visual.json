@@ -1,0 +1,169 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "7d0d96b46b52575e997b",
+  "position": {
+    "x": 650,
+    "y": 384,
+    "z": 6000,
+    "width": 610,
+    "height": 316,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "club_name"
+                }
+              },
+              "queryRef": "Value vs Points.club_name",
+              "nativeQueryRef": "club_name",
+              "displayName": "Club"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "season_label"
+                }
+              },
+              "queryRef": "Value vs Points.season_label",
+              "nativeQueryRef": "season_label",
+              "displayName": "Season"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "value_rank"
+                }
+              },
+              "queryRef": "Value vs Points.value_rank",
+              "nativeQueryRef": "value_rank",
+              "displayName": "Value rank"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "position"
+                }
+              },
+              "queryRef": "Value vs Points.position",
+              "nativeQueryRef": "position",
+              "displayName": "Finished"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "points"
+                }
+              },
+              "queryRef": "Value vs Points.points",
+              "nativeQueryRef": "points",
+              "displayName": "Points"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "expected_points"
+                }
+              },
+              "queryRef": "Value vs Points.expected_points",
+              "nativeQueryRef": "expected_points",
+              "displayName": "Expected"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Value vs Points"
+                    }
+                  },
+                  "Property": "points_vs_expected"
+                }
+              },
+              "queryRef": "Value vs Points.points_vs_expected",
+              "nativeQueryRef": "points_vs_expected",
+              "displayName": "vs expected"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Value vs Points"
+                  }
+                },
+                "Property": "points_vs_expected"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Points above or below what value predicts (Q11)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

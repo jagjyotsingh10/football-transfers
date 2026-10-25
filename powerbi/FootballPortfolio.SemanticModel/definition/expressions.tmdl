@@ -1,0 +1,9 @@
+expression SqlServer = "localhost\SQLEXPRESS" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 9788a4b5-4ad1-5828-8598-a0a3d23bd798
+
+	annotation PBI_ResultType = Text
+
+expression SqlDatabase = "FootballTransferROI" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 11071d8c-e467-519f-aee8-728e29b25c43
+
+	annotation PBI_ResultType = Text

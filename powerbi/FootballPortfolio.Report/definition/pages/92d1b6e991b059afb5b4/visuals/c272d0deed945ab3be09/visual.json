@@ -1,0 +1,99 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "c272d0deed945ab3be09",
+  "position": {
+    "x": 20,
+    "y": 410,
+    "z": 3000,
+    "width": 400,
+    "height": 290,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "scatterChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club KPIs"
+                    }
+                  },
+                  "Property": "club_name"
+                }
+              },
+              "queryRef": "Club KPIs.club_name",
+              "nativeQueryRef": "club_name",
+              "displayName": "Club"
+            }
+          ]
+        },
+        "X": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club KPIs"
+                    }
+                  },
+                  "Property": "Value-Weighted Age"
+                }
+              },
+              "queryRef": "Club KPIs.Value-Weighted Age",
+              "nativeQueryRef": "Value-Weighted Age",
+              "displayName": "Value-weighted age"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Club KPIs"
+                    }
+                  },
+                  "Property": "KPI Portfolio Value"
+                }
+              },
+              "queryRef": "Club KPIs.KPI Portfolio Value",
+              "nativeQueryRef": "KPI Portfolio Value",
+              "displayName": "Portfolio value"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Age profile vs portfolio value (Q6)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
