@@ -1,0 +1,4 @@
+# Python 3.13 (pyodbc has no prebuilt wheel for 3.15 yet)
+pandas==3.1.0
+sqlalchemy==2.1.6
+pyodbc==5.3.0
