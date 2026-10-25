@@ -21,6 +21,19 @@
 | 10 | Which clubs have the highest average asset value? | PSG €55.8m per player, 5.4× the Ligue 1 average |
 | 11 | Does portfolio value buy league points? | Largely: value explains 60% of points per game; the most valuable squad won 19 of 30 titles |
 
+## Recommendations
+
+Squad value buys points, but extra spending doesn't buy points beyond what that value predicts: across 61 clubs, net spend and points above expectation have a correlation of -0.02 (Lens sold €106m more than it bought and beat expectation by 14.9 points a season; Chelsea spent €1.01bn net and fell 8.2 short). For a club, that means:
+
+1. **Buy young.** 71.6% of players signed under 23 gained value; 11.8% of those signed at 27+ did.
+2. **Pay close to market value.** Only 15.6% of deals land within 10% of it; Premier League clubs pay €1.23 per €1.
+3. **Judge spending by points above expectation**, set from the squad's value rank, not by league position.
+4. **Keep any five players under half the portfolio.** Levante holds 71.8% in five; Arsenal 37.5%.
+5. **Sell before decline.** A third of all value sits in players already falling in value.
+6. **Accept volatility as the price of growth**, and don't borrow against a young squad's value.
+
+Details, evidence and limits: [`docs/recommendations.md`](docs/recommendations.md). How to use and present the dashboard: [`docs/walkthrough.md`](docs/walkthrough.md).
+
 ---
 
 ## Setup (Windows)
@@ -153,4 +166,4 @@ See `docs/data_quality_log.md`. All 9 checks passed on the 2026-10-25 download: 
 - [x] **Week 1:** Database, load pipeline, star schema, data quality checks
 - [x] **Week 2:** Portfolio model, league tables, reporting views, answers to the 11 questions
 - [x] **Week 3:** Power BI: 5 pages (overview, club benchmark, risk, transfers, value vs points) plus a club drill-through, model verified against SQL, screenshots
-- [ ] **Week 4:** Recommendations, screenshots, walkthrough
+- [x] **Week 4:** Recommendations ([`docs/recommendations.md`](docs/recommendations.md)) and dashboard walkthrough ([`docs/walkthrough.md`](docs/walkthrough.md))

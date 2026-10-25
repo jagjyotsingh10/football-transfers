@@ -417,3 +417,33 @@ SELECT * FROM (
     HAVING COUNT(*) >= 4
     ORDER BY AVG(points_vs_expected) ASC
 ) u;
+
+/* =====================================================================
+   Supporting queries for docs/recommendations.md
+   ===================================================================== */
+
+-- R1. Signings by age at signing: how often did they gain value? (12+ months measured)
+SELECT CASE WHEN age_at_transfer < 23 THEN '1. under 23'
+            WHEN age_at_transfer < 27 THEN '2. 23-26'
+            ELSE '3. 27+' END                                             AS age_at_signing,
+       COUNT(*)                                                          AS signings,
+       CAST(100.0 * SUM(CASE WHEN appreciation_eur > 0 THEN 1 ELSE 0 END) / COUNT(*) AS DECIMAL(5,1)) AS pct_gained
+FROM rpt.vw_signing_appreciation
+WHERE appreciation_eur IS NOT NULL AND years_measured >= 1 AND value_at_transfer_eur > 0
+GROUP BY CASE WHEN age_at_transfer < 23 THEN '1. under 23'
+              WHEN age_at_transfer < 27 THEN '2. 23-26'
+              ELSE '3. 27+' END
+ORDER BY age_at_signing;
+
+-- R2. Does net spend buy points beyond what squad value already predicts?
+--     Correlation across clubs in all six seasons (net spend vs average points vs expected)
+WITH spend AS (
+    SELECT club_id, SUM(net_spend_eur) / 1e6 AS net_m FROM rpt.vw_club_transfer_balance GROUP BY club_id
+),
+perf AS (
+    SELECT club_id, AVG(points_vs_expected) AS pve
+    FROM rpt.vw_value_vs_points GROUP BY club_id HAVING COUNT(*) = 6
+)
+SELECT COUNT(*) AS clubs,
+       CAST((AVG(s.net_m * p.pve) - AVG(s.net_m) * AVG(p.pve)) / (STDEVP(s.net_m) * STDEVP(p.pve)) AS DECIMAL(4,2)) AS corr_net_spend_vs_points_vs_expected
+FROM perf p JOIN spend s ON s.club_id = p.club_id;

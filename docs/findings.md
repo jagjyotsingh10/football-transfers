@@ -56,7 +56,7 @@ in 2024, and the top 25 hold 96-98% of squad value in every year. "Latest" means
 **About a third of top 5 portfolio value is in players worth less than a year earlier. That share peaked at 43.5% in June 2022.**
 
 - Exposure by year: 37.4% (2021), 43.5% (2022), 34.0% (2023), 33.3% (2024), 36.6% (2025), 35.5% (2026). Value lost by those players: €3.8bn to €4.9bn a year.
-- Most exposed in June 2026: Athletic Bilbao 79.0%, Heidenheim 76.9%, Napoli 75.3%, Getafe 73.2%, Fiorentina 69.4%. **Liverpool** (67.8%) lost the most in euros: €255.5m.
+- Most exposed in June 2026: Athletic Bilbao 79.0%, Heidenheim 76.9%, Napoli 75.3%, Getafe 73.2%, Fiorentina 69.4%. In euros, the biggest losses were **Real Madrid** (€270.0m, 58.6% exposed) and **Liverpool** (€255.5m, 67.8%).
 - Persistently exposed (average 2021-2026, clubs in all six seasons): Atlético Madrid 54.2%, Manchester United 53.6%, Liverpool 51.4%, Napoli 50.8%, Marseille 50.2%.
 - Exposure = value of players worth less than 12 months earlier ÷ value of players who had a valuation 12 months earlier.
 
